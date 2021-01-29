@@ -45,20 +45,25 @@ variable "avi_cidr_block" {
   type        = string
   default     = "10.255.0.0/16"
 }
-variable "custom_vpc_id" {
-  description = "This field can be used to specify an existing VPC for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
+variable "custom_vnet_id" {
+  description = "This field can be used to specify an existing VNET for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
   type        = string
-  default     = null
+  default     = ""
 }
-variable "custom_subnet_ids" {
-  description = "This field can be used to specify a list of existing VPC Subnets for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
-  type        = list(string)
-  default     = null
+variable "custom_subnet_id" {
+  description = "This field can be used to specify a list of existing VNET Subnet for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
+  type        = string
+  default     = ""
 }
 variable "create_iam" {
   description = "Create IAM Service Account, Roles, and Role Bindings for Avi GCP Full Access Cloud"
   type        = bool
   default     = "false"
+}
+variable "controller_default_password" {
+  description = "This is the default password for the AVI controller image and can be found in the image download page."
+  type        = string
+  sensitive   = true
 }
 variable "controller_password" {
   description = "The password that will be used authenticating with the AVI Controller. This password be a minimum of 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters"
@@ -69,10 +74,15 @@ variable "controller_password" {
     error_message = "The controller_password value must be more than 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters."
   }
 }
-variable "instance_type" {
-  description = "The EC2 instance type for the AVI Controller"
+variable "controller_vm_size" {
+  description = "The VM size for the AVI Controller"
   type        = string
-  default     = "m5.2xlarge"
+  default     = "Standard D8s v3"
+}
+variable "se_vm_size" {
+  description = "The VM size for the AVI Service Engines. This value can be changed in the Service Engine Group configuration after deployment."
+  type        = string
+  default     = "Standard F2s"
 }
 variable "root_disk_size" {
   description = "The root disk size for the AVI controller"

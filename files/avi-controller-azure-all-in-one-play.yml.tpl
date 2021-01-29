@@ -16,6 +16,7 @@
     se_mgmt_subnet_name: ${se_mgmt_subnet_name}
     controller_version: ${controller_version}
     region: ${region}
+    se_vm_size: ${se_vm_size}
     se_name_prefix: ${se_name_prefix}
     controller_ha: ${controller_ha}
     use_azure_dns: ${use_azure_dns}
@@ -111,7 +112,7 @@
         max_se: "10"
         se_name_prefix: "{{ se_name_prefix }}"
         buffer_se: "1"
-        instance_flavor: "{{ instance_flavor }}"
+        instance_flavor: "{{ se_vm_size }}"
         realtime_se_metrics:
           duration: "10080"
           enabled: true

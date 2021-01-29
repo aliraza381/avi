@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 0.13.6"
   required_providers {
-    aws = {
+    azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 2.45.1"
     }
@@ -11,10 +11,13 @@ terraform {
     }
   }
 }
-#provider "azurerm" {
-#  subscription_id = data.azurerm_subscription.primary.id
-#}
+provider "azurerm" {
+  features {}
+  skip_provider_registration = "true"
+  #  subscription_id = data.azurerm_subscription.primary.id
+}
 resource "azurerm_resource_group" "avi" {
+  count    = var.create_resource_group ? 1 : 0
   name     = "${var.name_prefix}-avi-resources"
   location = var.region
 }
