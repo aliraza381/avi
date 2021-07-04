@@ -2,7 +2,7 @@
 resource "azurerm_virtual_network" "avi" {
   count               = var.create_networking ? 1 : 0
   name                = "${var.name_prefix}-avi-vnet"
-  address_space       = [var.avi_cidr_block]
+  address_space       = [var.vnet_address_space]
   location            = var.region
   resource_group_name = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group
 }
@@ -12,7 +12,7 @@ resource "azurerm_subnet" "avi" {
   name                 = "${var.name_prefix}-avi-subnet"
   resource_group_name  = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group
   virtual_network_name = azurerm_virtual_network.avi[0].name
-  address_prefixes     = [cidrsubnet(azurerm_virtual_network.avi[0].address_space[0], 8, 230 + count.index)]
+  address_prefixes     = [var.avi_subnet]
 }
 
 resource "azurerm_public_ip" "avi" {
@@ -30,7 +30,7 @@ resource "azurerm_network_interface" "avi" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = var.create_networking ? azurerm_subnet.avi[0].id : var.custom_subnet_id
+    subnet_id                     = var.create_networking ? azurerm_subnet.avi[0].id : data.azurerm_subnet.custom[0].id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.avi[count.index].id
   }
