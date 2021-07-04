@@ -3,21 +3,28 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 2.45.1"
+      version = "~> 2.66.0"
+    }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 1.6.0"
     }
     null = {
       source  = "hashicorp/null"
-      version = "3.0.0"
+      version = "~> 3.1.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.1.0"
     }
   }
 }
 provider "azurerm" {
   features {}
   skip_provider_registration = "true"
-  #  subscription_id = data.azurerm_subscription.primary.id
 }
 resource "azurerm_resource_group" "avi" {
   count    = var.create_resource_group ? 1 : 0
-  name     = "${var.name_prefix}-avi-resources"
+  name     = "rg-${var.name_prefix}-avi-${local.region}"
   location = var.region
 }

@@ -5,8 +5,13 @@
   roles:
     - role: avinetworks.avisdk
   vars:
-    controller: "{{ ansible_host }}"
+    avi_credentials:
+        controller: "localhost"
+        username: "admin"
+        password: "{{ password }}"
+        api_version: ${avi_version}
     username: admin
+    password: "{{ password }}"
     cloud_name: "Default-Cloud"
     ansible_become: yes
     ansible_become_password: "{{ password }}"
@@ -14,7 +19,6 @@
     se_resource_group: ${se_resource_group}
     se_vnet_id_path: ${se_vnet_id_path}
     se_mgmt_subnet_name: ${se_mgmt_subnet_name}
-    controller_version: ${controller_version}
     region: ${region}
     se_vm_size: ${se_vm_size}
     se_name_prefix: ${se_name_prefix}
@@ -36,6 +40,8 @@
         sleep: 5
     - name: Configure System Configurations
       avi_systemconfiguration:
+        avi_credentials: "{{ avi_credentials }}"
+        state: present
         email_configuration:
           smtp_type: "SMTP_LOCAL_HOST"
           from_email: admin@avicontroller.net
@@ -71,25 +77,27 @@
           sslprofile_ref: "/api/sslprofile?name=System-Standard-Portal"
           use_uuid_from_input: false
         welcome_workflow_complete: true
-        controller: "{{ controller }}"
-        username: "{{ username }}"
-        password: "{{ password }}"
+    - name: Create a Cloud connector user that is used for integration into cloud platforms
+      avi_cloudconnectoruser:
+        avi_credentials: "{{ avi_credentials }}"
         state: present
-        api_version: "{{ controller_version }}"
+        name: azure
+        azure_serviceprincipal:
+          application_id: "{{ azure_app_id }}"
+          authentication_token: "{{ azure_auth_token }}"
+          tenant_id: "{{ azure_tenant_id }}"
     - name: Configure Cloud
       avi_cloud:
-        controller: "{{ controller }}"
-        username: "{{ username }}"
-        password: "{{ password }}"
+        avi_credentials: "{{ avi_credentials }}"
         state: present
         name: "{{ cloud_name }}"
-        api_version: "{{ controller_version }}"
-        vtype: CLOUD_GCP
+        vtype: CLOUD_AZURE
         dhcp_enabled: true
         license_type: "LIC_CORES"
         azure_configuration:
           subscription_id: "{{ subscription_id }}"
           location: "{{ region }}"
+          cloud_credentials_ref: "/api/cloudconnectoruser?name=azure"
           network_info:
             - virtual_network_id: "{{ se_vnet_id_path }}" 
               se_network_id: "{{ se_mgmt_subnet_name }}"
@@ -103,11 +111,8 @@
     - name: Configure SE-Group
       avi_serviceenginegroup:
         name: "Default-Group" 
-        controller: "{{ controller }}"
-        username: "{{ username }}"
-        password: "{{ password }}"
+        avi_credentials: "{{ avi_credentials }}"
         state: present
-        api_version: "{{ controller_version }}"
         cloud_ref: "/api/cloud?name={{ cloud_name }}"
         max_se: "10"
         se_name_prefix: "{{ se_name_prefix }}"
@@ -119,22 +124,16 @@
     
     - name: Set Backup Passphrase
       avi_backupconfiguration:
-        controller: "{{ controller }}"
-        username: "{{ username }}"
-        password: "{{ password }}"
+        avi_credentials: "{{ avi_credentials }}"
         state: present
-        api_version: "{{ controller_version }}"
         name: Backup-Configuration
         backup_passphrase: "{{ password }}"
         upload_to_remote_host: false
 %{ if controller_ha }
     - name: Controller Cluster Configuration
       avi_cluster:
-        controller: "{{ controller }}"
-        username: "{{ username }}"
-        password: "{{ password }}"
+        avi_credentials: "{{ avi_credentials }}"
         state: present
-        api_version: "{{ controller_version }}"
         #virtual_ip:
         #  type: V4
         #  addr: "{{ controller_cluster_vip }}"

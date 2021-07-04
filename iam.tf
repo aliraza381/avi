@@ -1,11 +1,29 @@
-resource "azurerm_role_definition" "avi" {
+resource "random_password" "sp" {
+  length  = 8
+  special = false
+}
+resource "azuread_application" "avi" {
+  count        = var.create_iam ? 1 : 0
+  display_name = "${var.name_prefix}_Avi_Controller"
+}
+resource "azuread_service_principal" "avi" {
+  count          = var.create_iam ? 1 : 0
+  application_id = azuread_application.avi[0].application_id
+}
+resource "azuread_application_password" "avi" {
+  application_object_id = azuread_application.avi[0].object_id
+  value                 = random_password.sp.result
+  end_date_relative     = "4320h"
+}
+resource "azurerm_role_definition" "custom_controller" {
   count       = var.create_iam ? 1 : 0
-  name        = "${var.name_prefix}_Avi_Role"
+  name        = "${var.name_prefix}_Avi_Controller_Role"
   scope       = data.azurerm_subscription.current.id
   description = "Custom Role for Avi Controller."
 
   permissions {
-    actions = ["Microsoft.MarketplaceOrdering/offerTypes/publishers/offers/plans/agreements/read",
+    actions = [
+      "Microsoft.MarketplaceOrdering/offerTypes/publishers/offers/plans/agreements/read",
       "Microsoft.MarketplaceOrdering/offerTypes/publishers/offers/plans/agreements/write",
       "Microsoft.Network/virtualNetworks/read",
       "Microsoft.Network/virtualNetworks/checkIpAddressAvailability/read",
@@ -35,16 +53,17 @@ resource "azurerm_role_definition" "avi" {
     not_actions = []
   }
 
-  assignable_scopes = var.create_resource_group ? [
-    "/subscriptions/${data.azurerm_subscription.current.id}/resourceGroups/${azurerm_resource_group.avi[0].name}"
-    ] : [
-    "/subscriptions/${data.azurerm_subscription.current.id}/resourceGroups/${var.custom_controller_resource_group}"
-  ]
+  assignable_scopes = [data.azurerm_subscription.current.id]
 }
-resource "azurerm_role_assignment" "avi" {
-  for_each           = toset(azurerm_linux_virtual_machine.avi_controller)
-  name               = each.value.name
+resource "azurerm_role_assignment" "custom_controller" {
+  count              = var.create_iam ? 1 : 0
   scope              = data.azurerm_subscription.current.id
-  role_definition_id = "${data.azurerm_subscription.current.id}${azurerm_role_definition.avi[0].id}"
-  principal_id       = each.value.identity[0]["principal_id"]
+  role_definition_id = azurerm_role_definition.custom_controller[0].role_definition_resource_id
+  principal_id       = azuread_service_principal.avi[0].object_id
+}
+resource "azurerm_role_assignment" "contributor" {
+  count                = var.create_iam ? 1 : 0
+  scope                = azurerm_resource_group.avi[0].id
+  role_definition_name = "Contributor"
+  principal_id         = azuread_service_principal.avi[0].object_id
 }

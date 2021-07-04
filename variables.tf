@@ -22,7 +22,7 @@ variable "custom_controller_resource_group" {
   type        = string
   default     = ""
 }
-variable "controller_version" {
+variable "avi_version" {
   description = "The AVI Controller version that will be deployed"
   type        = string
 }
@@ -55,6 +55,11 @@ variable "custom_subnet_id" {
   type        = string
   default     = ""
 }
+variable "controller_public_address" {
+  description = "This variable controls if the Controller has a Public IP Address. When set to false the Ansible provisioner will connect to the private IP of the Controller."
+  type        = bool
+  default     = "false"
+}
 variable "create_iam" {
   description = "Create IAM Service Account, Roles, and Role Bindings for Avi GCP Full Access Cloud"
   type        = bool
@@ -63,12 +68,12 @@ variable "create_iam" {
 variable "controller_default_password" {
   description = "This is the default password for the AVI controller image and can be found in the image download page."
   type        = string
-  sensitive   = true
+  sensitive   = false
 }
 variable "controller_password" {
   description = "The password that will be used authenticating with the AVI Controller. This password be a minimum of 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters"
   type        = string
-  sensitive   = true
+  sensitive   = false
   validation {
     condition     = length(var.controller_password) > 7
     error_message = "The controller_password value must be more than 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters."
@@ -77,12 +82,12 @@ variable "controller_password" {
 variable "controller_vm_size" {
   description = "The VM size for the AVI Controller"
   type        = string
-  default     = "Standard D8s v3"
+  default     = "Standard_D8s_v3"
 }
 variable "se_vm_size" {
   description = "The VM size for the AVI Service Engines. This value can be changed in the Service Engine Group configuration after deployment."
   type        = string
-  default     = "Standard F2s"
+  default     = "Standard_F2s"
 }
 variable "root_disk_size" {
   description = "The root disk size for the AVI controller"
