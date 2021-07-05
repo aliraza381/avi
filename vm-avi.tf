@@ -73,7 +73,7 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
     disk_size_gb         = var.root_disk_size
   }
   provisioner "local-exec" {
-    command = "bash ${path.module}/files/change-controller-password.sh --controller-address \"${azurerm_public_ip.avi[0].ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
+    command = "bash ${path.module}/files/change-controller-password.sh --controller-address \"${azurerm_public_ip.avi[count.index].ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
   }
   depends_on = [
     azurerm_marketplace_agreement.avi,
@@ -93,11 +93,15 @@ resource "null_resource" "ansible_provisioner" {
     timeout  = "600s"
     password = var.controller_password
   }
-
   provisioner "file" {
     content = templatefile("${path.module}/files/avi-controller-azure-all-in-one-play.yml.tpl",
     local.cloud_settings)
     destination = "/home/admin/avi-controller-azure-all-in-one-play.yml"
+  }
+  provisioner "file" {
+    content = templatefile("${path.module}/files/avi-cleanup.yml.tpl",
+    local.cloud_settings)
+    destination = "/home/admin/avi-cleanup.yml"
   }
   provisioner "remote-exec" {
     inline = [

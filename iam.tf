@@ -1,6 +1,8 @@
 resource "random_password" "sp" {
-  length  = 8
-  special = false
+  length           = 12
+  special          = false
+  number           = true
+  override_special = "?!#@"
 }
 resource "azuread_application" "avi" {
   count        = var.create_iam ? 1 : 0

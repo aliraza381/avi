@@ -17,14 +17,14 @@ resource "azurerm_subnet" "avi" {
 
 resource "azurerm_public_ip" "avi" {
   count               = var.controller_ha ? 3 : 1
-  name                = "${var.name_prefix}-avi-controller-pip"
+  name                = "${var.name_prefix}-avi-controller-pip-${count.index + 1}"
   resource_group_name = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group
   location            = var.region
   allocation_method   = "Static"
 }
 resource "azurerm_network_interface" "avi" {
   count               = var.controller_ha ? 3 : 1
-  name                = "${var.name_prefix}-avi-controller-nic"
+  name                = "${var.name_prefix}-avi-controller-nic-${count.index + 1}"
   location            = var.region
   resource_group_name = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group
 
