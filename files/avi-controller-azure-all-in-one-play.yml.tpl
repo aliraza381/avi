@@ -120,6 +120,7 @@
           use_managed_disks: true
           use_standard_alb: false
           dhcp_enabled: true
+      register: avi_cloud
     - name: Set Backup Passphrase
       avi_backupconfiguration:
         avi_credentials: "{{ avi_credentials }}"
@@ -238,7 +239,7 @@
       register: gslb_se_group
 %{ endif}
 %{ if configure_dns_vs ~}
-    - name: DNS VS Config | Get AWS Subnet Information
+    - name: DNS VS Config | Get Subnet Information
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         http_method: get
@@ -252,7 +253,7 @@
         tenant: "admin"
         data:
           east_west_placement: false
-          cloud_ref: "{{ avi_cloud.obj.url }}"
+          cloud_ref: "/api/cloud?name={{ cloud_name }}"
 %{ if configure_gslb ~}
           se_group_ref: "{{ gslb_se_group.obj.url }}"
 %{ endif ~}
@@ -265,6 +266,7 @@
             avi_allocated_fip: "{{ dns_vs_settings.allocate_public_ip }}"
             auto_allocate_ip_type: V4_ONLY
             prefix_length: 32
+            subnet_uuid: "{{ dns_vs_subnet.obj.results.0.url }}"
             placement_networks: []
             ipam_network_subnet:
               network_ref: "{{ dns_vs_subnet.obj.results.0.url }}"
