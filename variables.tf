@@ -40,6 +40,15 @@ variable "create_networking" {
   type        = bool
   default     = "true"
 }
+variable "create_vnet_peering" {
+  description = "This variable is used to peer the created VNET. If true the vnet_peering_settings variable must be configured"
+  type        = bool
+  default     = "false"
+}
+variable "vnet_peering_settings" {
+  description = "This variable is used to peer the created VNET. If true the vnet_peering_settings variable must be configured"
+  type        = object({ resource_group = string, vnet_name = string, global_peering = bool })
+}
 variable "controller_public_address" {
   description = "This variable controls if the Controller has a Public IP Address. When set to false the Ansible provisioner will connect to the private IP of the Controller."
   type        = bool
@@ -109,7 +118,7 @@ variable "root_disk_size" {
   }
 }
 variable "custom_tags" {
-  description = "Custom tags added to AWS Resources created by the module"
+  description = "Custom tags added to Resources created by the module"
   type        = map(string)
   default     = {}
 }

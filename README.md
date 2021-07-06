@@ -88,11 +88,13 @@ No modules.
 | [azurerm_role_definition.custom_controller](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
 | [azurerm_subnet.avi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_virtual_network.avi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
+| [azurerm_virtual_network_peering.avi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
 | [null_resource.ansible_provisioner](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_password.sp](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [azurerm_subnet.custom](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 | [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
+| [azurerm_virtual_network.peer](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | data source |
 
 ## Inputs
 
@@ -113,11 +115,12 @@ No modules.
 | <a name="input_create_iam"></a> [create\_iam](#input\_create\_iam) | Create IAM Service Account, Roles, and Role Bindings for Avi GCP Full Access Cloud | `bool` | `"false"` | no |
 | <a name="input_create_networking"></a> [create\_networking](#input\_create\_networking) | This variable controls the VNET and subnet creation for the AVI Controller. When set to false the custome\_network\_resource\_group, custom\_vnet\_name and custom\_subnet\_name variables must be configured. | `bool` | `"true"` | no |
 | <a name="input_create_resource_group"></a> [create\_resource\_group](#input\_create\_resource\_group) | If true a Resource Group is created and used for the AVI Controllers and Service Engines | `bool` | `"true"` | no |
+| <a name="input_create_vnet_peering"></a> [create\_vnet\_peering](#input\_create\_vnet\_peering) | This variable is used to peer the created VNET. If true the vnet\_peering\_settings variable must be configured | `bool` | `"false"` | no |
 | <a name="input_custom_controller_resource_group"></a> [custom\_controller\_resource\_group](#input\_custom\_controller\_resource\_group) | This field can be used to specify an existing Resource Group for AVI Controllers. The create\_resource\_group variable must also be set to false for this resource group to be used. | `string` | `""` | no |
 | <a name="input_custom_network_resource_group"></a> [custom\_network\_resource\_group](#input\_custom\_network\_resource\_group) | This field can be used to specify an existing VNET for the controller and SEs. The create-networking variable must also be set to false for this network to be used. | `string` | `""` | no |
 | <a name="input_custom_se_resource_group"></a> [custom\_se\_resource\_group](#input\_custom\_se\_resource\_group) | This field can be used to specify an existing Resource Group for Service Engines. The create\_resource\_group variable must also be set to false for this resource group to be used. | `string` | `""` | no |
 | <a name="input_custom_subnet_name"></a> [custom\_subnet\_name](#input\_custom\_subnet\_name) | This field can be used to specify a list of existing VNET Subnet for the controller and SEs. The create-networking variable must also be set to false for this network to be used. | `string` | `""` | no |
-| <a name="input_custom_tags"></a> [custom\_tags](#input\_custom\_tags) | Custom tags added to AWS Resources created by the module | `map(string)` | `{}` | no |
+| <a name="input_custom_tags"></a> [custom\_tags](#input\_custom\_tags) | Custom tags added to Resources created by the module | `map(string)` | `{}` | no |
 | <a name="input_custom_vnet_name"></a> [custom\_vnet\_name](#input\_custom\_vnet\_name) | This field can be used to specify an existing VNET for the controller and SEs. The create-networking variable must also be set to false for this network to be used. | `string` | `""` | no |
 | <a name="input_dns_search_domain"></a> [dns\_search\_domain](#input\_dns\_search\_domain) | The optional DNS search domain that will be used by the controller | `string` | `null` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | The optional DNS servers that will be used for local DNS resolution by the controller. Example ["8.8.4.4", "8.8.8.8"] | `list(string)` | `null` | no |
@@ -134,6 +137,7 @@ No modules.
 | <a name="input_se_vm_size"></a> [se\_vm\_size](#input\_se\_vm\_size) | The VM size for the AVI Service Engines. This value can be changed in the Service Engine Group configuration after deployment. | `string` | `"Standard_F2s"` | no |
 | <a name="input_use_azure_dns"></a> [use\_azure\_dns](#input\_use\_azure\_dns) | If true the AVI Cloud is configured to use Azure DNS | `bool` | `"false"` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | The CIDR that will be used for creating a VNET for Avi resources | `string` | `"10.255.0.0/16"` | no |
+| <a name="input_vnet_peering_settings"></a> [vnet\_peering\_settings](#input\_vnet\_peering\_settings) | This variable is used to peer the created VNET. If true the vnet\_peering\_settings variable must be configured | `object({ resource_group = string, vnet_name = string, global_peering = bool })` | n/a | yes |
 
 ## Outputs
 

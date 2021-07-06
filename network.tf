@@ -35,3 +35,12 @@ resource "azurerm_network_interface" "avi" {
     public_ip_address_id          = azurerm_public_ip.avi[count.index].id
   }
 }
+resource "azurerm_virtual_network_peering" "avi" {
+  count                     = var.create_vnet_peering ? 1 : 0
+  name                      = "avi_vnet_peering"
+  resource_group_name       = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_controller_resource_group
+  virtual_network_name      = azurerm_virtual_network.avi[0].name
+  remote_virtual_network_id = data.azurerm_virtual_network.peer[0].id
+  allow_gateway_transit     = false
+  allow_forwarded_traffic   = true
+}
