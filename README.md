@@ -112,7 +112,7 @@ module "avi_controller_azure_eastus2" {
 output "controller_info" { 
   value = module.avi_controller_azure.controllers
 }
-
+```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
