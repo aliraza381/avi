@@ -4,6 +4,8 @@ resource "random_password" "sp" {
   number           = true
   override_special = "?!#@"
 }
+resource "random_uuid" "role_definition" {
+}
 resource "azuread_application" "avi" {
   count        = var.create_iam ? 1 : 0
   display_name = "${var.name_prefix}_Avi_Controller"
@@ -19,7 +21,7 @@ resource "azuread_application_password" "avi" {
 }
 resource "azurerm_role_definition" "custom_controller" {
   count       = var.create_iam ? 1 : 0
-  name        = "${var.name_prefix}_Avi_Controller_Role"
+  name        = "${var.name_prefix}_Avi_Controller_Role_${random_uuid.role_definition.result}"
   scope       = data.azurerm_subscription.current.id
   description = "Custom Role for Avi Controller."
 
