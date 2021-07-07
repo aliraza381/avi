@@ -461,7 +461,7 @@
           name: "azure"
           azure_info:
             subscription_id: "{{ subscription_id }}"
-            cloud_credentials_ref: "/api/cloudconnectoruser?name=azure"
+            cloud_credential_ref: "/api/cloudconnectoruser?name=azure"
 
     - name: Controller Cluster Configuration
       avi_cluster:
