@@ -2,10 +2,6 @@ variable "region" {
   description = "The Region that the AVI controller and SEs will be deployed to"
   type        = string
 }
-variable "avi_version" {
-  description = "The version of Avi that will be deployed"
-  type        = string
-}
 variable "create_resource_group" {
   description = "If true a Resource Group is created and used for the AVI Controllers and Service Engines"
   type        = bool

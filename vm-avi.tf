@@ -4,7 +4,7 @@ locals {
     se_mgmt_subnet_name             = var.create_networking ? azurerm_subnet.avi[0].name : data.azurerm_subnet.custom[0].name
     se_vnet_id_path                 = var.create_networking ? azurerm_virtual_network.avi[0].id : data.azurerm_subnet.custom[0].id
     controller_public_address       = var.controller_public_address
-    avi_version                     = var.avi_version
+    avi_version                     = local.avi_version
     dns_servers                     = var.dns_servers
     dns_search_domain               = var.dns_search_domain
     ntp_servers                     = var.ntp_servers
@@ -30,6 +30,7 @@ locals {
     se_ha_mode                      = var.se_ha_mode
 
   }
+  avi_version      = "20.1.4"
   region           = replace(var.region, " ", "-")
   controller_ip    = azurerm_linux_virtual_machine.avi_controller[*].private_ip_address
   controller_names = azurerm_linux_virtual_machine.avi_controller[*].name
