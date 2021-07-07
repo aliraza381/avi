@@ -2,7 +2,7 @@
 This Terraform module creates and configures an AVI (NSX Advanced Load Balancer) Controller on Azure
 
 ## Module Functions
-The module is meant to be modular and can create all or none of the prerequiste resources needed for the AVI Azure Deployment including:
+The module is meant to be modular and can create all or none of the prerequisite resources needed for the AVI Azure Deployment including:
 * VNET and Subnet for the Controller and SEs (configured with create_networking variable)
 * VNET Peering (configured with create_vnet_peering and vnet_peering_settings variables)
 * Azure Active Directory Application, Service Principal, Custom Role, and Role Assignment for the Controller (configured with create_iam variable)
