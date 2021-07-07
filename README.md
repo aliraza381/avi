@@ -6,7 +6,7 @@ The module is meant to be modular and can create all or none of the prerequiste 
 * VNET and Subnet for the Controller and SEs (configured with create_networking variable)
 * VNET Peering (configured with create_vnet_peering and vnet_peering_settings variables)
 * Azure Active Directory Application, Service Principal, Custom Role, and Role Assignment for the Controller (configured with create_iam variable)
-* Network Security Groups for AVI Controller and SE communication (configured with create_nsg variable)
+* Network Security Groups for AVI Controller and SE communication (future work)
 * Azure Virtual Machine Instance using an official AVI Azure Marketplace image
 * High Availability AVI Controller Deployment (configured with controller_ha variable)
 
