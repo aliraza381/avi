@@ -364,8 +364,8 @@
         avi_api_patch_op: add
         tenant: admin
         dns_virtualservice_refs: "{{ dns_vs.obj.url }}"
-%{ endif}
-%{ if configure_gslb }
+%{ endif ~} 
+%{ if configure_gslb ~}
     - name: GSLB Config | Verify Cluster UUID
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
@@ -383,12 +383,12 @@
             ip_addresses:
               - type: "V4"
                 addr: "{{ controller_ip[0] }}"
-%{ if controller_ha }
+%{ if controller_ha ~}
               - type: "V4"
                 addr: "{{ controller_ip[1] }}"
               - type: "V4"
                 addr: "{{ controller_ip[2] }}"
-%{ endif }
+%{ endif ~}
             enabled: True
             member_type: "GSLB_ACTIVE_MEMBER"
             port: 443
@@ -401,6 +401,9 @@
           %{ endfor }
         leader_cluster_uuid: "{{ cluster.obj.uuid }}"
       register: gslb_results
+    - name: Display gslb_results
+      ansible.builtin.debug:
+        var: gslb_results
   %{ endif }
   %{ if configure_gslb_additional_sites }%{ for site in additional_gslb_sites }
 
@@ -452,10 +455,10 @@
                 password: "{{ password }}"
                 cluster_uuid: "{{ gslb_verify.obj.rx_uuid }}"
                 ip_addresses:  
-%{ for address in site.ip_address_list }
+%{ for address in site.ip_address_list ~}
                   - type: "V4"
                     addr: "${address}"
-%{ endfor }
+%{ endfor ~}
                 dns_vses:
                   - dns_vs_uuid: "{{ dns_vs_verify.obj.results.0.uuid }}"
   %{ endfor }%{ endif }

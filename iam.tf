@@ -8,7 +8,7 @@ resource "random_uuid" "role_definition" {
 }
 resource "azuread_application" "avi" {
   count        = var.create_iam ? 1 : 0
-  display_name = "${var.name_prefix}_Avi_Controller"
+  display_name = "${var.name_prefix}_Avi_Controller_${var.region}"
 }
 resource "azuread_service_principal" "avi" {
   count          = var.create_iam ? 1 : 0
