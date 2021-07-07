@@ -383,6 +383,12 @@
             ip_addresses:
               - type: "V4"
                 addr: "{{ controller_ip[0] }}"
+%{ if controller_ha }
+              - type: "V4"
+                addr: "{{ controller_ip[1] }}"
+              - type: "V4"
+                addr: "{{ controller_ip[2] }}"
+%{ endif }
             enabled: True
             member_type: "GSLB_ACTIVE_MEMBER"
             port: 443
@@ -424,7 +430,7 @@
           port: 443
           ip_addresses:
             - type: "V4"
-              addr: "${site.ip_address}"
+              addr: "${site.ip_address_list[0]}"
       register: gslb_verify
       
     - name: Display GSLB Siteops Verify
@@ -445,12 +451,14 @@
                 username: "{{ username }}"
                 password: "{{ password }}"
                 cluster_uuid: "{{ gslb_verify.obj.rx_uuid }}"
-                ip_addresses:
+                ip_addresses:  
+%{ for address in site.ip_address_list }
                   - type: "V4"
-                    addr: "${site.ip_address}"
+                    addr: "${address}"
+%{ endfor }
                 dns_vses:
                   - dns_vs_uuid: "{{ dns_vs_verify.obj.results.0.uuid }}"
-  %{ endfor }%{ endif }
+%{ endfor }%{ endif }
 %{ if controller_ha }
     - name: Configure Cluster Credentials
       avi_api_session:
@@ -490,4 +498,3 @@
         name: "cluster01"
         tenant_uuid: "admin"
 %{ endif }
-

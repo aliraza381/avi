@@ -169,7 +169,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_gslb_sites"></a> [additional\_gslb\_sites](#input\_additional\_gslb\_sites) | The Names and IP addresses of the GSLB Sites that will be configured. | `list(object({ name = string, ip_address = string, dns_vs_name = string }))` | <pre>[<br>  {<br>    "dns_vs_name": "",<br>    "ip_address": "",<br>    "name": ""<br>  }<br>]</pre> | no |
+| <a name="input_additional_gslb_sites"></a> [additional\_gslb\_sites](#input\_additional\_gslb\_sites) | The Names and IP addresses of the GSLB Sites that will be configured. If the Site is a controller cluster the ip\_address\_list should have the ip address of each controller. | `list(object({ name = string, ip_address_list = list(string), dns_vs_name = string }))` | <pre>[<br>  {<br>    "dns_vs_name": "DNS-VS",<br>    "ip_address_list": [<br>      ""<br>    ],<br>    "name": ""<br>  }<br>]</pre> | no |
 | <a name="input_avi_subnet"></a> [avi\_subnet](#input\_avi\_subnet) | The CIDR that will be used for creating a subnet in the Avi VNET | `string` | `"10.255.0.0/24"` | no |
 | <a name="input_cluster_ip"></a> [cluster\_ip](#input\_cluster\_ip) | The IP Address that will be used for the Avi Cluster address. This IP should be in the same subnet as the avi\_subnet variable or the subnet specified with the custom\_subnet\_name | `string` | `"10.255.0.250"` | no |
 | <a name="input_configure_dns_profile"></a> [configure\_dns\_profile](#input\_configure\_dns\_profile) | Configure Avi DNS Profile for DNS Record Creation for Virtual Services. If set to true the dns\_service\_domain variable must also be set | `bool` | `"false"` | no |
@@ -213,6 +213,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_controller_private_addresses"></a> [controller\_private\_addresses](#output\_controller\_private\_addresses) | The Private IP Addresses allocated for the Avi Controller(s) |
 | <a name="output_controller_resource_group"></a> [controller\_resource\_group](#output\_controller\_resource\_group) | The Resource Group used for the Avi Controller |
 | <a name="output_controller_vnet"></a> [controller\_vnet](#output\_controller\_vnet) | The VNET that the Avi Controller is deployed to |
 | <a name="output_controllers"></a> [controllers](#output\_controllers) | The AVI Controller(s) Information |

@@ -169,9 +169,9 @@ variable "configure_gslb_additional_sites" {
   default     = "false"
 }
 variable "additional_gslb_sites" {
-  description = "The Names and IP addresses of the GSLB Sites that will be configured."
-  type        = list(object({ name = string, ip_address = string, dns_vs_name = string }))
-  default     = [{ name = "", ip_address = "", dns_vs_name = "" }]
+  description = "The Names and IP addresses of the GSLB Sites that will be configured. If the Site is a controller cluster the ip_address_list should have the ip address of each controller."
+  type        = list(object({ name = string, ip_address_list = list(string), dns_vs_name = string }))
+  default     = [{ name = "", ip_address_list = [""], dns_vs_name = "DNS-VS" }]
 }
 variable "se_ha_mode" {
   description = "The HA mode of the Service Engine Group. Possible values active/active, n+m, or active/standby"
