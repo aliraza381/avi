@@ -65,8 +65,8 @@ module "avi_controller_azure_westus2" {
   controller_default_password  = "Value Redacted and available within the VMware Customer Portal"
   controller_password          = "<newpassword>"
   create_networking            = true
-  create_vnet_peering             = true
-  vnet_peering_settings           = { global_peering = true, resource_group = "rg-<name_prefix>-avi-<region>", vnet_name      = "<name_prefix>-avi-vnet-<region>" }
+  create_vnet_peering          = true
+  vnet_peering_settings        = { global_peering = true, resource_group = "rg-<name_prefix>-avi-<region>", vnet_name = "<name_prefix>-avi-vnet-<region>" }
   create_iam                   = true
   controller_ha                = true
   controller_public_address    = true
@@ -90,7 +90,7 @@ module "avi_controller_azure_eastus2" {
   controller_password             = "<newpassword>"
   create_networking               = true
   create_vnet_peering             = true
-  vnet_peering_settings           = { global_peering = true, resource_group = "rg-<name_prefix>-avi-<region>", vnet_name      = "<name_prefix>-avi-vnet-<region>" }
+  vnet_peering_settings           = { global_peering = true, resource_group = "rg-<name_prefix>-avi-<region>", vnet_name = "<name_prefix>-avi-vnet-<region>" }
   create_iam                      = true
   controller_ha                   = true
   controller_public_address       = true
@@ -109,8 +109,11 @@ module "avi_controller_azure_eastus2" {
   configure_gslb_additional_sites = "true"
   additional_gslb_sites           = [{name = "West2", ip_address = 10.251.0.250 , dns_vs_name = "DNS-VS"}]
 }
-output "controller_info" { 
-  value = module.avi_controller_azure.controllers
+output "eastus2_controller_info" {
+  value = module.avi_controller_azure_eastus2.controllers
+}
+output "westus2_controller_info" {
+  value = module.avi_controller_azure_westus2.controllers
 }
 ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
