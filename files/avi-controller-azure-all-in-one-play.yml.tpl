@@ -406,7 +406,7 @@
 
     - name: GSLB Config | Verify DNS configuration
       avi_api_session:
-        controller: "${site.ip_address}"
+        controller: "${site.ip_address_list[0]}"
         username: "admin"
         password: "{{ password }}"
         api_version: ${avi_version}
@@ -458,7 +458,7 @@
 %{ endfor }
                 dns_vses:
                   - dns_vs_uuid: "{{ dns_vs_verify.obj.results.0.uuid }}"
-%{ endfor }%{ endif }
+  %{ endfor }%{ endif }
 %{ if controller_ha }
     - name: Configure Cluster Credentials
       avi_api_session:

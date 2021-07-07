@@ -10,7 +10,7 @@ output "controllers" {
 }
 output "controller_private_addresses" {
   description = "The Private IP Addresses allocated for the Avi Controller(s)"
-  value       = [azurerm_linux_virtual_machine.avi_controller[*].private_ip_address]
+  value       = azurerm_linux_virtual_machine.avi_controller[*].private_ip_address
 }
 output "controller_resource_group" {
   description = "The Resource Group used for the Avi Controller"
