@@ -85,7 +85,7 @@ variable "custom_subnet_name" {
   default     = ""
 }
 variable "create_iam" {
-  description = "Create IAM Service Account, Roles, and Role Bindings for Avi GCP Full Access Cloud"
+  description = "Create Azure AD Application and Service Principal, Controller Custom Role, and Application Role Binding for Avi Azure Full Access Cloud"
   type        = bool
   default     = "false"
 }
