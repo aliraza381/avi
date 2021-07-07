@@ -107,7 +107,7 @@ module "avi_controller_azure_eastus2" {
   gslb_site_name                  = "East2"
   gslb_domains                    = ["gslb.avidemo.net"]
   configure_gslb_additional_sites = "true"
-  additional_gslb_sites           = [{name = "West2", ip_address = 10.251.0.250 , dns_vs_name = "DNS-VS"}]
+  additional_gslb_sites           = [{name = "West2", ip_address = "10.251.0.250", dns_vs_name = "DNS-VS"}]
 }
 output "eastus2_controller_info" {
   value = module.avi_controller_azure_eastus2.controllers
@@ -163,7 +163,6 @@ No modules.
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [azurerm_subnet.custom](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 | [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
-| [azurerm_virtual_network.peer](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | data source |
 
 ## Inputs
 
@@ -212,5 +211,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_controller_resource_group"></a> [controller\_resource\_group](#output\_controller\_resource\_group) | The Resource Group used for the Avi Controller |
+| <a name="output_controller_vnet"></a> [controller\_vnet](#output\_controller\_vnet) | The VNET that the Avi Controller is deployed to |
 | <a name="output_controllers"></a> [controllers](#output\_controllers) | The AVI Controller(s) Information |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -40,7 +40,7 @@ resource "azurerm_virtual_network_peering" "avi" {
   name                      = "avi_vnet_peering"
   resource_group_name       = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_controller_resource_group
   virtual_network_name      = azurerm_virtual_network.avi[0].name
-  remote_virtual_network_id = data.azurerm_virtual_network.peer[0].id
+  remote_virtual_network_id = "${data.azurerm_subscription.current.id}/resourceGroups/${var.vnet_peering_settings.resource_group}/providers/Microsoft.Network/virtualNetworks/${var.vnet_peering_settings.vnet_name}"
   allow_gateway_transit     = false
   allow_forwarded_traffic   = true
 }

@@ -8,8 +8,3 @@ data "azurerm_subnet" "custom" {
   virtual_network_name = var.custom_vnet_name
   resource_group_name  = var.custom_network_resource_group
 }
-data "azurerm_virtual_network" "peer" {
-  count               = var.create_vnet_peering == true ? 1 : 0
-  name                = var.vnet_peering_settings.vnet_name
-  resource_group_name = var.vnet_peering_settings.resource_group
-}
