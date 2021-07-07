@@ -37,6 +37,7 @@ locals {
   controller_names = azurerm_linux_virtual_machine.avi_controller[*].name
 }
 resource "azurerm_marketplace_agreement" "avi" {
+  count     = var.create_marketplace_agreement ? 1 : 0
   publisher = "avi-networks"
   offer     = "avi-vantage-adc"
   plan      = "avi-vantage-adc-2001"

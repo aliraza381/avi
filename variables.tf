@@ -7,6 +7,11 @@ variable "create_resource_group" {
   type        = bool
   default     = "true"
 }
+variable "create_marketplace_agreement" {
+  description = "If set to true the user agrees to the terms and conditions for the Avi Marketplace image as found here https://azuremarketplace.microsoft.com/en-us/marketplace/apps/avi-networks.avi-vantage-adc. When multiple instances of this module are used only 1 should have this value set to true to prevent duplicate deployments"
+  type        = bool
+  default     = "true"
+}
 variable "use_standard_alb" {
   description = "If true the AVI Cloud is configured to use standard SKU for the Azure LBs"
   type        = bool
