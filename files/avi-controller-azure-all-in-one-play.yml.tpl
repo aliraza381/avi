@@ -26,6 +26,7 @@
     se_vnet_id_path: ${se_vnet_id_path}
     se_mgmt_subnet_name: ${se_mgmt_subnet_name}
     region: ${region}
+    use_standard_alb: ${use_standard_alb}
     se_vm_size: ${se_vm_size}
     se_ha_mode: ${se_ha_mode}
     se_name_prefix: ${se_name_prefix}
@@ -119,7 +120,7 @@
           use_azure_dns: "{{ use_azure_dns }}"
           use_enhanced_ha: false
           use_managed_disks: true
-          use_standard_alb: false
+          use_standard_alb: "{{ use_standard_alb }}"
           dhcp_enabled: true
       register: avi_cloud
     - name: Set Backup Passphrase

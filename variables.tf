@@ -7,6 +7,11 @@ variable "create_resource_group" {
   type        = bool
   default     = "true"
 }
+variable "use_standard_alb" {
+  description = "If true the AVI Cloud is configured to use standard SKU for the Azure LBs"
+  type        = bool
+  default     = "false"
+}
 variable "use_azure_dns" {
   description = "If true the AVI Cloud is configured to use Azure DNS"
   type        = bool
