@@ -1,52 +1,118 @@
-# AVI Controller Deployment on GCP Terraform module
+# AVI Controller Deployment on Azure Terraform module
 This Terraform module creates and configures an AVI (NSX Advanced Load Balancer) Controller on Azure
 
 ## Module Functions
 The module is meant to be modular and can create all or none of the prerequiste resources needed for the AVI Azure Deployment including:
-* VNET and Subnet for the Controller and SEs (optional with create_networking variable)
-* Azure Active Directory Roles, and Role Assignment (optional with create_iam variable)
-* Network Security Groups for AVI Controller and SE communication
+* VNET and Subnet for the Controller and SEs (configured with create_networking variable)
+* VNET Peering (configured with create_vnet_peering and vnet_peering_settings variables)
+* Azure Active Directory Application, Service Principal, Custom Role, and Role Assignment for the Controller (configured with create_iam variable)
+* Network Security Groups for AVI Controller and SE communication (configured with create_nsg variable)
 * Azure Virtual Machine Instance using an official AVI Azure Marketplace image
-* High Availability AVI Controller Deployment (optional with controller_ha variable)
+* High Availability AVI Controller Deployment (configured with controller_ha variable)
 
 During the creation of the Controller instance the following initialization steps are performed:
 * Copy Ansible playbook to controller using the assigned public IP
-* Run Ansible playbook to configure initial settings and Azure Full Access Cloud 
+* Run Ansible playbook to configure initial settings and Azure Full Access Cloud
+
+The Ansible playbook can optionally add these configurations:
+* Create Avi DNS Profile (configured with configure_dns_profile and dns_service_domain variables)
+* Create Avi DNS Virtual Service (configured with configure_dns_vs and dns_vs_settings variables)
+* Configure GSLB (configured with configure_gslb, gslb_site_name, gslb_domains, and configure_gslb_additional_sites variables)
 
 
 ## Usage
-This is an example of a controller deployment that leverages an existing VPC (with a cidr_block of 10.154.0.0/16) and 3 subnets. The public key is already created in EC2 and the private key found in the "/home/<user>/.ssh/id_rsa" will be used to copy and run the Ansible playbook to configure the Controller.
+This is an example of an HA controller deployment that creates the controller and all other requisite Azure resources. A Cluster IP is utilized for the deployment and configured with the cluster_ip variable. 
 ```hcl
 terraform {
   backend "local" {
   }
 }
-module "avi-controller-aws" {
-  source  = "slarimore02/avi-controller-aws/aws"
+module "avi_controller_azure" {
+  source  = "slarimore02/avi-controller-azure/azurerm"
   version = "1.0.x"
 
-  region = "us-west-1"
-  aws_access_key = "<access-key>"
-  aws_secret_key = "<secret-key>"
-  create_networking = "false"
-  create_iam = "false"
-  controller_version = "20.1.3"
-  custom_vpc_id = "vpc-<id>"
-  custom_subnet_ids = ["subnet-<id>","subnet-<id>","subnet-<id>"]
-  avi_cidr_block = "10.154.0.0/16"
-  controller_password = "<newpassword>"
-  key_pair_name = "<key>"
-  private_key_path = "/home/<user>/.ssh/id_rsa"
-  name_prefix = "<name>"
-  custom_tags = { "Role" : "Avi-Controller", "Owner" : "admin", "Department" : "IT", "shutdown_policy" : "noshut" }
+  region                       = "westus2"
+  name_prefix                  = "slarimore"
+  controller_default_password  = "Value Redacted and available within the VMware Customer Portal"
+  controller_password          = "<newpassword>"
+  create_networking            = true
+  create_iam                   = true
+  controller_ha                = true
+  controller_public_address    = true
+  custom_tags                  = { "Role" : "Avi-Controller", "Owner" : "user@email.com", "Department" : "IT" }
+  se_ha_mode                   = "active/active"
+  vnet_address_space           = "10.255.0.0/16"
+  avi_subnet                   = "10.255.0.0/24"
+  cluster_ip                   = "10.255.0.250"
 }
-output "controller_ip" { 
-  value = module.avi_controller_aws.public_address
-}
-output "ansible_variables" {
-  value = module.avi_controller_aws.ansible_variables
+output "controller_info" { 
+  value = module.avi_controller_azure.controllers
 }
 ```
+## GSLB Deployment Example
+The example below shows a GSLB deployment with 2 regions utilized. VNET Peering is configured (with create_vnet_peering and vnet_peering_settings variables) between the two newly created Avi VNETs so that the controllers can communicate. In addition a Cluster IP is specified with the cluster_ip variable. 
+```hcl
+terraform {
+  backend "local" {
+  }
+}
+module "avi_controller_azure_westus2" {
+  source  = "slarimore02/avi-controller-azure/azurerm"
+  version = "1.0.x"
+
+  region                       = "westus2"
+  name_prefix                  = "companyname"
+  controller_default_password  = "Value Redacted and available within the VMware Customer Portal"
+  controller_password          = "<newpassword>"
+  create_networking            = true
+  create_vnet_peering             = true
+  vnet_peering_settings           = { global_peering = true, resource_group = "rg-<name_prefix>-avi-<region>", vnet_name      = "<name_prefix>-avi-vnet-<region>" }
+  create_iam                   = true
+  controller_ha                = true
+  controller_public_address    = true
+  custom_tags                  = { "Role" : "Avi-Controller", "Owner" : "user@email.com", "Department" : "IT" }
+  se_ha_mode                   = "active/active"
+  vnet_address_space           = "10.251.0.0/16"
+  avi_subnet                   = "10.251.0.0/24"
+  cluster_ip                   = "10.251.0.250"
+  configure_dns_profile        = "true"
+  dns_service_domain           = "west2.avidemo.net"
+  configure_dns_vs             = "true"
+  dns_vs_settings              = { allocate_public_ip = "true", subnet_name = "companyname-avi-subnet" }
+}
+module "avi_controller_azure_eastus2" {
+  source  = "slarimore02/avi-controller-azure/azurerm"
+  version = "1.0.x"
+
+  region                          = "eastus2"
+  name_prefix                     = "companyname"
+  controller_default_password     = "Value Redacted and available within the VMware Customer Portal"
+  controller_password             = "<newpassword>"
+  create_networking               = true
+  create_vnet_peering             = true
+  vnet_peering_settings           = { global_peering = true, resource_group = "rg-<name_prefix>-avi-<region>", vnet_name      = "<name_prefix>-avi-vnet-<region>" }
+  create_iam                      = true
+  controller_ha                   = true
+  controller_public_address       = true
+  custom_tags                     = { "Role" : "Avi-Controller", "Owner" : "user@email.com", "Department" : "IT" }
+  se_ha_mode                      = "active/active"
+  vnet_address_space              = "10.252.0.0/16"
+  avi_subnet                      = "10.252.0.0/24"
+  cluster_ip                      = "10.252.0.250"
+  configure_dns_profile           = "true"
+  dns_service_domain              = "east2.avidemo.net"
+  configure_dns_vs                = "true"
+  dns_vs_settings                 = { allocate_public_ip = "true", subnet_name = "companyname-avi-subnet" }
+  configure_gslb                  = "true"
+  gslb_site_name                  = "East2"
+  gslb_domains                    = ["gslb.avidemo.net"]
+  configure_gslb_additional_sites = "true"
+  additional_gslb_sites           = [{name = "West2", ip_address = 10.251.0.250 , dns_vs_name = "DNS-VS"}]
+}
+output "controller_info" { 
+  value = module.avi_controller_azure.controllers
+}
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -103,6 +169,7 @@ No modules.
 | <a name="input_additional_gslb_sites"></a> [additional\_gslb\_sites](#input\_additional\_gslb\_sites) | The Names and IP addresses of the GSLB Sites that will be configured. | `list(object({ name = string, ip_address = string, dns_vs_name = string }))` | <pre>[<br>  {<br>    "dns_vs_name": "",<br>    "ip_address": "",<br>    "name": ""<br>  }<br>]</pre> | no |
 | <a name="input_avi_subnet"></a> [avi\_subnet](#input\_avi\_subnet) | The CIDR that will be used for creating a subnet in the Avi VNET | `string` | `"10.255.0.0/24"` | no |
 | <a name="input_avi_version"></a> [avi\_version](#input\_avi\_version) | The version of Avi that will be deployed | `string` | n/a | yes |
+| <a name="input_cluster_ip"></a> [cluster\_ip](#input\_cluster\_ip) | The IP Address that will be used for the Avi Cluster address. This IP should be in the same subnet as the avi\_subnet variable or the subnet specified with the custom\_subnet\_name | `string` | `"10.255.0.250"` | no |
 | <a name="input_configure_dns_profile"></a> [configure\_dns\_profile](#input\_configure\_dns\_profile) | Configure Avi DNS Profile for DNS Record Creation for Virtual Services. If set to true the dns\_service\_domain variable must also be set | `bool` | `"false"` | no |
 | <a name="input_configure_dns_vs"></a> [configure\_dns\_vs](#input\_configure\_dns\_vs) | Create DNS Virtual Service. The configure\_dns\_profile and configure\_ipam\_profile variables must be set to true and their associated configuration variables must also be set | `bool` | `"false"` | no |
 | <a name="input_configure_gslb"></a> [configure\_gslb](#input\_configure\_gslb) | Configure GSLB. The gslb\_site\_name, gslb\_domains, and configure\_dns\_vs variables must also be set. Optionally the additional\_gslb\_sites variable can be used to add active GSLB sites | `bool` | `"false"` | no |

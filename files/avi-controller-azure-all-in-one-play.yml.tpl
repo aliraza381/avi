@@ -16,6 +16,7 @@
     cloud_name: "Default-Cloud"
     controller_ip:
       ${ indent(6, yamlencode(controller_ip))}
+    cluster_ip: ${cluster_ip}
     controller_names:
       ${ indent(6, yamlencode(controller_names))}
     ansible_become: yes
@@ -450,13 +451,25 @@
                   - dns_vs_uuid: "{{ dns_vs_verify.obj.results.0.uuid }}"
   %{ endfor }%{ endif }
 %{ if controller_ha }
+    - name: Configure Cluster Credentials
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        http_method: post
+        path: "clusterclouddetails"
+        tenant: "admin"
+        data:
+          name: "azure"
+          azure_info:
+            subscription_id: "{{ subscription_id }}"
+            cloud_credentials_ref: "/api/cloudconnectoruser?name=azure"
+
     - name: Controller Cluster Configuration
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         state: present
-        #virtual_ip:
-        #  type: V4
-        #  addr: "{{ controller_cluster_vip }}"
+        virtual_ip:
+          type: V4
+          addr: "{{ cluster_ip }}"
         nodes:
             - name:  "{{ controller_names[0] }}" 
               password: "{{ password }}"
