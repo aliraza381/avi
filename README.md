@@ -19,6 +19,22 @@ The Ansible playbook can optionally add these configurations:
 * Create Avi DNS Virtual Service (configured with configure_dns_vs and dns_vs_settings variables)
 * Configure GSLB (configured with configure_gslb, gslb_site_name, gslb_domains, and configure_gslb_additional_sites variables)
 
+# Environment Requirements
+
+## Azure Prequisites
+The following are Azure prerequisites for running this module:
+* Subscription created
+* Account with either Contributor role (if create_iam is false) or Owner (if create_iam is true)
+
+## Azure Provider
+For authenticating to the Azure Provider the instructions found here should be followed - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
+
+## Avi Controller Image
+This module will use the Azure Marketplace for deploying the Avi image. The terms of the image and more information can be found in this link - https://azuremarketplace.microsoft.com/en-us/marketplace/apps/avi-networks.avi-vantage-adc. By default the marketplace agreement is accepted with the create_marketplace_agreement variable. 
+
+## Host OS 
+The following packages must be installed on the host operating system:
+* curl 
 
 ## Usage
 This is an example of an HA controller deployment that creates the controller and all other requisite Azure resources. A Cluster IP is utilized for the deployment and configured with the cluster_ip variable. 
@@ -107,7 +123,7 @@ module "avi_controller_azure_eastus2" {
   gslb_site_name                  = "East2"
   gslb_domains                    = ["gslb.avidemo.net"]
   configure_gslb_additional_sites = "true"
-  additional_gslb_sites           = [{name = "West2", ip_address = "10.251.0.250", dns_vs_name = "DNS-VS"}]
+  additional_gslb_sites           = [{name = "West2", ip_address_list = module.avi_controller_azure_westus2.controllers[*].private_ip_address, dns_vs_name = "DNS-VS"}]
 }
 output "eastus2_controller_info" {
   value = module.avi_controller_azure_eastus2.controllers
