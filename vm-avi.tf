@@ -22,14 +22,17 @@ locals {
     configure_dns_profile           = var.configure_dns_profile
     dns_service_domain              = var.dns_service_domain
     configure_dns_vs                = var.configure_dns_vs
-    dns_vs_settings                 = var.dns_vs_settings
+    dns_vs_settings                 = local.dns_vs_settings
     configure_gslb                  = var.configure_gslb
     configure_gslb_additional_sites = var.configure_gslb_additional_sites
     gslb_site_name                  = var.gslb_site_name
     gslb_domains                    = var.gslb_domains
     additional_gslb_sites           = var.additional_gslb_sites
     se_ha_mode                      = var.se_ha_mode
-
+  }
+  dns_vs_settings = {
+    subnet_name        = var.create_networking ? azurerm_subnet.avi[0].name : var.custom_subnet_name,
+    allocate_public_ip = var.dns_vs_allocate_public_ip
   }
   avi_version      = "20.1.4"
   region           = replace(var.region, " ", "-")
@@ -77,12 +80,8 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
     disk_size_gb         = var.root_disk_size
   }
   provisioner "local-exec" {
-    command = "bash ${path.module}/files/change-controller-password.sh --controller-address \"${azurerm_public_ip.avi[count.index].ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
+    command = var.controller_public_address ? "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self.public_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\"" : "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self[count.index].private_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
   }
-  depends_on = [
-    azurerm_marketplace_agreement.avi,
-    azurerm_public_ip.avi
-  ]
 }
 resource "null_resource" "ansible_provisioner" {
   # Changes to any instance of the cluster requires re-provisioning
@@ -92,7 +91,7 @@ resource "null_resource" "ansible_provisioner" {
 
   connection {
     type     = "ssh"
-    host     = azurerm_public_ip.avi[0].ip_address
+    host     = var.controller_public_address ? azurerm_linux_virtual_machine.avi_controller[0].public_ip_address : azurerm_linux_virtual_machine.avi_controller[0].private_ip_address
     user     = "admin"
     timeout  = "600s"
     password = var.controller_password
@@ -109,7 +108,7 @@ resource "null_resource" "ansible_provisioner" {
   }
   provisioner "remote-exec" {
     inline = [
-      "ansible-playbook avi-controller-azure-all-in-one-play.yml -e password=${var.controller_password} -e azure_app_id=\"${azuread_application.avi[0].application_id}\" -e azure_auth_token=\"${random_password.sp.result}\" -e azure_tenant_id=\"${data.azurerm_client_config.current.tenant_id}\"  > ansible-playbook.log 2> ansible-error.log",
+      "ansible-playbook avi-controller-azure-all-in-one-play.yml -e password=${var.controller_password} -e azure_app_id=\"${azuread_application.avi[0].application_id}\" -e azure_auth_token=\"${random_password.sp.result}\" -e azure_tenant_id=\"${data.azurerm_subscription.current.tenant_id}\"  > ansible-playbook.log 2> ansible-error.log",
       "echo Controller Configuration Completed"
     ]
   }

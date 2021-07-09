@@ -13,7 +13,7 @@ variable "create_marketplace_agreement" {
   default     = "true"
 }
 variable "use_standard_alb" {
-  description = "If true the AVI Cloud is configured to use standard SKU for the Azure LBs"
+  description = "If true the AVI Cloud is configured to use standard SKU for the Azure LBs that route to Avi SEs"
   type        = bool
   default     = "false"
 }
@@ -23,7 +23,7 @@ variable "use_azure_dns" {
   default     = "false"
 }
 variable "custom_se_resource_group" {
-  description = "This field can be used to specify an existing Resource Group for Service Engines. The create_resource_group variable must also be set to false for this resource group to be used."
+  description = "This field can be used to specify an existing Resource Group for Service Engines."
   type        = string
   default     = ""
 }
@@ -42,7 +42,7 @@ variable "controller_ha" {
   default     = "false"
 }
 variable "create_networking" {
-  description = "This variable controls the VNET and subnet creation for the AVI Controller. When set to false the custome_network_resource_group, custom_vnet_name and custom_subnet_name variables must be configured."
+  description = "This variable controls the VNET and subnet creation for the AVI Controller. When set to false the custom_controller_resource_group, custom_vnet_name and custom_subnet_name variables must be configured."
   type        = bool
   default     = "true"
 }
@@ -75,18 +75,13 @@ variable "cluster_ip" {
   type        = string
   default     = "10.255.0.250"
 }
-variable "custom_network_resource_group" {
-  description = "This field can be used to specify an existing VNET for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
-  type        = string
-  default     = ""
-}
 variable "custom_vnet_name" {
-  description = "This field can be used to specify an existing VNET for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
+  description = "This field can be used to specify an existing VNET for the controller and SEs. The create_networking variable must also be set to false for this network to be used."
   type        = string
   default     = ""
 }
 variable "custom_subnet_name" {
-  description = "This field can be used to specify a list of existing VNET Subnet for the controller and SEs. The create-networking variable must also be set to false for this network to be used."
+  description = "This field can be used to specify a list of existing VNET Subnet for the controller and SEs. The create_networking variable must also be set to false for this network to be used."
   type        = string
   default     = ""
 }
@@ -148,10 +143,10 @@ variable "configure_dns_vs" {
   type        = bool
   default     = "false"
 }
-variable "dns_vs_settings" {
-  description = "The DNS Virtual Service settings. With the auto_allocate_ip option is set to \"true\" the VS IP address will be allocated via an IPAM profile. Example:{ auto_allocate_ip = \"true\", auto_allocate_public_ip = \"true\", vs_ip = \"\", network_name = \"network-192.168.20.0/24\", network = \"192.168.20.0/24\" }"
-  type        = object({ subnet_name = string, allocate_public_ip = bool })
-  default     = null
+variable "dns_vs_allocate_public_ip" {
+  description = "Defines if a public IP address will be allocated for the DNS VS. Only applies if the configure_dns_vs variable is set to true"
+  type        = bool
+  default     = "true"
 }
 variable "configure_gslb" {
   description = "Configure GSLB. The gslb_site_name, gslb_domains, and configure_dns_vs variables must also be set. Optionally the additional_gslb_sites variable can be used to add active GSLB sites"
