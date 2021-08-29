@@ -40,7 +40,7 @@ module "avi_controller_azure_eastus2" {
   create_networking               = true
   create_vnet_peering             = true
   vnet_peering_settings           = { global_peering = true, resource_group = "rg-${var.name_prefix_west}-avi-westus2", vnet_name = "${var.name_prefix_west}-avi-vnet-westus2" }
-  create_iam                      = true
+  create_iam                      = var.create_iam
   controller_ha                   = var.controller_ha
   controller_public_address       = var.controller_public_address
   custom_tags                     = { "Role" : "Avi-Controller", "Owner" : "slarimore", "Provisioner" : "Terraform" }

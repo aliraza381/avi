@@ -19,27 +19,27 @@ variable "name_prefix" {
 variable "create_networking" {
   description = "This variable controls the VPC and subnet creation for the Avi Controller. When set to false the custom_vpc_name and custom_subnetwork_name must be set."
   type        = bool
-  default     = "true"
+  default     = true
 }
 variable "create_iam" {
   description = "Create IAM Roles and Role Bindings necessary for the Avi GCP Full Access Cloud. If not set the Roles and permissions in this document must be associated with the controller service account - https://Avinetworks.com/docs/latest/gcp-full-access-roles-and-permissions/"
   type        = bool
-  default     = "false"
+  default     = false
 }
 variable "controller_ha" {
   description = "If true a HA controller cluster is deployed and configured"
   type        = bool
-  default     = "false"
+  default     = false
 }
 variable "controller_public_address" {
   description = "This variable controls if the Controller has a Public IP Address. When set to false the Ansible provisioner will connect to the private IP of the Controller."
   type        = bool
-  default     = "true"
+  default     = true
 }
 variable "configure_dns_profile" {
   description = "Configure Avi DNS Profile for DNS Record Creation for Virtual Services. If set to true the dns_service_domain variable must also be set"
   type        = bool
-  default     = "false"
+  default     = false
 }
 variable "dns_service_domain" {
   description = "The DNS Domain that will be available for Virtual Services. Avi will be the Authorative Nameserver for this domain and NS records may need to be created pointing to the Avi Service Engine addresses. An example is demo.Avi.com"
@@ -49,7 +49,7 @@ variable "dns_service_domain" {
 variable "configure_dns_vs" {
   description = "Create DNS Virtual Service. The configure_dns_profile and configure_ipam_profile variables must be set to true and their associated configuration variables must also be set"
   type        = bool
-  default     = "false"
+  default     = false
 }
 variable "controller_az_app_id" {
   description = "If the create_iam variable is set to false, this is the Azure Application ID that the Avi Controller will use to create Azure resources"
