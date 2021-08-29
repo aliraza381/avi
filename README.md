@@ -48,7 +48,7 @@ module "avi_controller_azure" {
   version = "1.0.x"
 
   region                       = "westus2"
-  name_prefix                  = "slarimore"
+  name_prefix                  = "companyname"
   controller_default_password  = "Value Redacted and available within the VMware Customer Portal"
   controller_password          = "<newpassword>"
   create_networking            = true
@@ -139,7 +139,7 @@ For a controller deployment that is only accesible via private IPs the controlle
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.6 |
-| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 1.6.0 |
+| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.0.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 2.66.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.1.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.1.0 |
@@ -148,7 +148,7 @@ For a controller deployment that is only accesible via private IPs the controlle
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 1.6.0 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.0.1 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.66.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
@@ -176,8 +176,8 @@ No modules.
 | [azurerm_virtual_network.avi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [azurerm_virtual_network_peering.avi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
 | [null_resource.ansible_provisioner](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [random_password.sp](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_uuid.role_definition](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) | resource |
+| [azuread_client_config.current](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) | data source |
 | [azurerm_subnet.custom](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 | [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
@@ -189,9 +189,11 @@ No modules.
 | <a name="input_avi_subnet"></a> [avi\_subnet](#input\_avi\_subnet) | The CIDR that will be used for creating a subnet in the Avi VNET | `string` | `"10.255.0.0/24"` | no |
 | <a name="input_cluster_ip"></a> [cluster\_ip](#input\_cluster\_ip) | The IP Address that will be used for the Avi Cluster address. This IP should be in the same subnet as the avi\_subnet variable or the subnet specified with the custom\_subnet\_name | `string` | `"10.255.0.250"` | no |
 | <a name="input_configure_dns_profile"></a> [configure\_dns\_profile](#input\_configure\_dns\_profile) | Configure Avi DNS Profile for DNS Record Creation for Virtual Services. If set to true the dns\_service\_domain variable must also be set | `bool` | `"false"` | no |
-| <a name="input_configure_dns_vs"></a> [configure\_dns\_vs](#input\_configure\_dns\_vs) | Create DNS Virtual Service. The configure\_dns\_profile and configure\_ipam\_profile variables must be set to true and their associated configuration variables must also be set | `bool` | `"false"` | no |
+| <a name="input_configure_dns_vs"></a> [configure\_dns\_vs](#input\_configure\_dns\_vs) | Create DNS Virtual Service. The configure\_dns\_profile variables must be set to true and their associated configuration variables must also be set | `bool` | `"false"` | no |
 | <a name="input_configure_gslb"></a> [configure\_gslb](#input\_configure\_gslb) | Configure GSLB. The gslb\_site\_name, gslb\_domains, and configure\_dns\_vs variables must also be set. Optionally the additional\_gslb\_sites variable can be used to add active GSLB sites | `bool` | `"false"` | no |
 | <a name="input_configure_gslb_additional_sites"></a> [configure\_gslb\_additional\_sites](#input\_configure\_gslb\_additional\_sites) | Configure Additional GSLB Sites. The additional\_gslb\_sites, gslb\_site\_name, gslb\_domains, and configure\_dns\_vs variables must also be set. Optionally the additional\_gslb\_sites variable can be used to add active GSLB sites | `bool` | `"false"` | no |
+| <a name="input_controller_az_app_id"></a> [controller\_az\_app\_id](#input\_controller\_az\_app\_id) | If the create\_iam variable is set to false, this is the Azure Application ID that the Avi Controller will use to create Azure resources | `string` | `null` | no |
+| <a name="input_controller_az_client_secret"></a> [controller\_az\_client\_secret](#input\_controller\_az\_client\_secret) | If the create\_iam variable is set to false, this is the Azure Client Secret that the Avi Controller will use to create Azure resources | `string` | `null` | no |
 | <a name="input_controller_default_password"></a> [controller\_default\_password](#input\_controller\_default\_password) | This is the default password for the AVI controller image and can be found in the image download page. | `string` | n/a | yes |
 | <a name="input_controller_ha"></a> [controller\_ha](#input\_controller\_ha) | If true a HA controller cluster is deployed and configured | `bool` | `"false"` | no |
 | <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The password that will be used authenticating with the AVI Controller. This password be a minimum of 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters | `string` | n/a | yes |
@@ -223,7 +225,7 @@ No modules.
 | <a name="input_use_azure_dns"></a> [use\_azure\_dns](#input\_use\_azure\_dns) | If true the AVI Cloud is configured to use Azure DNS | `bool` | `"false"` | no |
 | <a name="input_use_standard_alb"></a> [use\_standard\_alb](#input\_use\_standard\_alb) | If true the AVI Cloud is configured to use standard SKU for the Azure LBs that route to Avi SEs | `bool` | `"false"` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | The CIDR that will be used for creating a VNET for Avi resources | `string` | `"10.255.0.0/16"` | no |
-| <a name="input_vnet_peering_settings"></a> [vnet\_peering\_settings](#input\_vnet\_peering\_settings) | This variable is used to peer the created VNET. If true the vnet\_peering\_settings variable must be configured | `object({ resource_group = string, vnet_name = string, global_peering = bool })` | n/a | yes |
+| <a name="input_vnet_peering_settings"></a> [vnet\_peering\_settings](#input\_vnet\_peering\_settings) | This variable is used to peer the created VNET. If true the vnet\_peering\_settings variable must be configured | `object({ resource_group = string, vnet_name = string, global_peering = bool })` | `null` | no |
 
 ## Outputs
 

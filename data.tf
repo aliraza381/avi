@@ -1,5 +1,5 @@
-data "azurerm_subscription" "current" {
-}
+data "azurerm_subscription" "current" {}
+data "azuread_client_config" "current" {}
 data "azurerm_subnet" "custom" {
   count                = var.create_networking == false ? 1 : 0
   name                 = var.custom_subnet_name

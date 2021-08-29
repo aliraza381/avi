@@ -1,22 +1,18 @@
-resource "random_password" "sp" {
-  length           = 12
-  special          = false
-  number           = true
-  override_special = "?!#@"
-}
 resource "random_uuid" "role_definition" {
 }
 resource "azuread_application" "avi" {
   count        = var.create_iam ? 1 : 0
   display_name = "${var.name_prefix}_Avi_Controller_${var.region}"
+  owners       = [data.azuread_client_config.current.object_id]
+
 }
 resource "azuread_service_principal" "avi" {
   count          = var.create_iam ? 1 : 0
   application_id = azuread_application.avi[0].application_id
 }
 resource "azuread_application_password" "avi" {
+  count                 = var.create_iam ? 1 : 0
   application_object_id = azuread_application.avi[0].object_id
-  value                 = random_password.sp.result
   end_date_relative     = "4320h"
 }
 resource "azurerm_role_definition" "custom_controller" {

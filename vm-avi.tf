@@ -107,8 +107,11 @@ resource "null_resource" "ansible_provisioner" {
     destination = "/home/admin/avi-cleanup.yml"
   }
   provisioner "remote-exec" {
-    inline = [
-      "ansible-playbook avi-controller-azure-all-in-one-play.yml -e password=${var.controller_password} -e azure_app_id=\"${azuread_application.avi[0].application_id}\" -e azure_auth_token=\"${random_password.sp.result}\" -e azure_tenant_id=\"${data.azurerm_subscription.current.tenant_id}\"  > ansible-playbook.log 2> ansible-error.log",
+    inline = var.create_iam ? [
+      "ansible-playbook avi-controller-azure-all-in-one-play.yml -e password=${var.controller_password} -e azure_app_id=\"${azuread_application.avi[0].application_id}\" -e azure_auth_token=\"${azuread_application_password.avi[0].value}\" -e azure_tenant_id=\"${data.azurerm_subscription.current.tenant_id}\"  > ansible-playbook.log 2> ansible-error.log",
+      "echo Controller Configuration Completed"
+      ] : [
+      "ansible-playbook avi-controller-azure-all-in-one-play.yml -e password=${var.controller_password} -e azure_app_id=\"${var.controller_az_app_id}\" -e azure_auth_token=\"${var.controller_az_client_secret}\" -e azure_tenant_id=\"${data.azurerm_subscription.current.tenant_id}\"  > ansible-playbook.log 2> ansible-error.log",
       "echo Controller Configuration Completed"
     ]
   }

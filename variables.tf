@@ -54,6 +54,7 @@ variable "create_vnet_peering" {
 variable "vnet_peering_settings" {
   description = "This variable is used to peer the created VNET. If true the vnet_peering_settings variable must be configured"
   type        = object({ resource_group = string, vnet_name = string, global_peering = bool })
+  default     = null
 }
 variable "controller_public_address" {
   description = "This variable controls if the Controller has a Public IP Address. When set to false the Ansible provisioner will connect to the private IP of the Controller."
@@ -93,16 +94,28 @@ variable "create_iam" {
 variable "controller_default_password" {
   description = "This is the default password for the AVI controller image and can be found in the image download page."
   type        = string
-  sensitive   = false
+  sensitive   = true
 }
 variable "controller_password" {
   description = "The password that will be used authenticating with the AVI Controller. This password be a minimum of 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters"
   type        = string
-  sensitive   = false
+  sensitive   = true
   validation {
     condition     = length(var.controller_password) > 7
     error_message = "The controller_password value must be more than 8 characters and contain at least one each of uppercase, lowercase, numbers, and special characters."
   }
+}
+variable "controller_az_app_id" {
+  description = "If the create_iam variable is set to false, this is the Azure Application ID that the Avi Controller will use to create Azure resources"
+  type        = string
+  sensitive   = true
+  default     = null
+}
+variable "controller_az_client_secret" {
+  description = "If the create_iam variable is set to false, this is the Azure Client Secret that the Avi Controller will use to create Azure resources"
+  type        = string
+  sensitive   = true
+  default     = null
 }
 variable "controller_vm_size" {
   description = "The VM size for the AVI Controller"
@@ -139,7 +152,7 @@ variable "dns_service_domain" {
   default     = ""
 }
 variable "configure_dns_vs" {
-  description = "Create DNS Virtual Service. The configure_dns_profile and configure_ipam_profile variables must be set to true and their associated configuration variables must also be set"
+  description = "Create DNS Virtual Service. The configure_dns_profile variables must be set to true and their associated configuration variables must also be set"
   type        = bool
   default     = "false"
 }
