@@ -16,7 +16,6 @@
     cloud_name: "Default-Cloud"
     controller_ip:
       ${ indent(6, yamlencode(controller_ip))}
-    cluster_ip: ${cluster_ip}
     controller_names:
       ${ indent(6, yamlencode(controller_names))}
     ansible_become: yes
@@ -479,9 +478,6 @@
       avi_cluster:
         avi_credentials: "{{ avi_credentials }}"
         state: present
-        virtual_ip:
-          type: V4
-          addr: "{{ cluster_ip }}"
         nodes:
             - name:  "{{ controller_names[0] }}" 
               password: "{{ password }}"

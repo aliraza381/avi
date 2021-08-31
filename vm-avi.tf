@@ -15,7 +15,6 @@ locals {
     se_resource_group               = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group
     se_name_prefix                  = var.name_prefix
     controller_ha                   = var.controller_ha
-    cluster_ip                      = var.cluster_ip
     controller_ip                   = local.controller_ip
     controller_names                = local.controller_names
     use_standard_alb                = var.use_standard_alb
@@ -81,6 +80,13 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
   }
   provisioner "local-exec" {
     command = var.controller_public_address ? "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self.public_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\"" : "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self[count.index].private_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
+  }
+  timeouts {
+    create = "20m"
+    delete = "20m"
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 resource "null_resource" "ansible_provisioner" {

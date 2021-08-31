@@ -37,7 +37,7 @@ The following packages must be installed on the host operating system:
 * curl 
 
 ## Usage
-This is an example of an HA controller deployment that creates the controller and all other requisite Azure resources. A Cluster IP is utilized for the deployment and configured with the cluster_ip variable. 
+This is an example of an HA controller deployment that creates the controller and all other requisite Azure resources.
 ```hcl
 terraform {
   backend "local" {
@@ -59,14 +59,13 @@ module "avi_controller_azure" {
   se_ha_mode                   = "active/active"
   vnet_address_space           = "10.255.0.0/16"
   avi_subnet                   = "10.255.0.0/24"
-  cluster_ip                   = "10.255.0.250"
 }
 output "controller_info" { 
   value = module.avi_controller_azure.controllers
 }
 ```
 ## GSLB Deployment Example
-The example below shows a GSLB deployment with 2 regions utilized. VNET Peering is configured (with create_vnet_peering and vnet_peering_settings variables) between the two newly created Avi VNETs so that the controllers can communicate. In addition a Cluster IP is specified with the cluster_ip variable. 
+The example below shows a GSLB deployment with 2 regions utilized. VNET Peering is configured (with create_vnet_peering and vnet_peering_settings variables) between the two newly created Avi VNETs so that the controllers can communicate.
 ```hcl
 terraform {
   backend "local" {
@@ -90,7 +89,6 @@ module "avi_controller_azure_westus2" {
   se_ha_mode                   = "active/active"
   vnet_address_space           = "10.251.0.0/16"
   avi_subnet                   = "10.251.0.0/24"
-  cluster_ip                   = "10.251.0.250"
   configure_dns_profile        = "true"
   dns_service_domain           = "west2.avidemo.net"
   configure_dns_vs             = "true"
@@ -113,7 +111,6 @@ module "avi_controller_azure_eastus2" {
   se_ha_mode                      = "active/active"
   vnet_address_space              = "10.252.0.0/16"
   avi_subnet                      = "10.252.0.0/24"
-  cluster_ip                      = "10.252.0.250"
   configure_dns_profile           = "true"
   dns_service_domain              = "east2.avidemo.net"
   configure_dns_vs                = "true"
@@ -140,7 +137,7 @@ For a controller deployment that is only accesible via private IPs the controlle
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.6 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.0.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 2.66.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 2.74.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.1.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.1.0 |
 
@@ -149,7 +146,7 @@ For a controller deployment that is only accesible via private IPs the controlle
 | Name | Version |
 |------|---------|
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.0.1 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.66.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.74.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
 
@@ -187,7 +184,6 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_gslb_sites"></a> [additional\_gslb\_sites](#input\_additional\_gslb\_sites) | The Names and IP addresses of the GSLB Sites that will be configured. If the Site is a controller cluster the ip\_address\_list should have the ip address of each controller. | `list(object({ name = string, ip_address_list = list(string), dns_vs_name = string }))` | <pre>[<br>  {<br>    "dns_vs_name": "DNS-VS",<br>    "ip_address_list": [<br>      ""<br>    ],<br>    "name": ""<br>  }<br>]</pre> | no |
 | <a name="input_avi_subnet"></a> [avi\_subnet](#input\_avi\_subnet) | The CIDR that will be used for creating a subnet in the Avi VNET | `string` | `"10.255.0.0/24"` | no |
-| <a name="input_cluster_ip"></a> [cluster\_ip](#input\_cluster\_ip) | The IP Address that will be used for the Avi Cluster address. This IP should be in the same subnet as the avi\_subnet variable or the subnet specified with the custom\_subnet\_name | `string` | `"10.255.0.250"` | no |
 | <a name="input_configure_dns_profile"></a> [configure\_dns\_profile](#input\_configure\_dns\_profile) | Configure Avi DNS Profile for DNS Record Creation for Virtual Services. If set to true the dns\_service\_domain variable must also be set | `bool` | `"false"` | no |
 | <a name="input_configure_dns_vs"></a> [configure\_dns\_vs](#input\_configure\_dns\_vs) | Create DNS Virtual Service. The configure\_dns\_profile variables must be set to true and their associated configuration variables must also be set | `bool` | `"false"` | no |
 | <a name="input_configure_gslb"></a> [configure\_gslb](#input\_configure\_gslb) | Configure GSLB. The gslb\_site\_name, gslb\_domains, and configure\_dns\_vs variables must also be set. Optionally the additional\_gslb\_sites variable can be used to add active GSLB sites | `bool` | `"false"` | no |

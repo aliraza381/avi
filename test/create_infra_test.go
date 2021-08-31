@@ -45,24 +45,6 @@ func createRandomPrefix(base string) string {
 func TestDeployment(t *testing.T) {
    t.Parallel()
 
-   //clientID := os.Getenv("ARM_CLIENT_ID")
-   //clientSecret := os.Getenv("ARM_CLIENT_SECRET")
-   //subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
-   //tenantID := os.Getenv("ARM_TENANT_ID")
-   
-	//if clientID == "" {
-	//	t.Fatalf("Azure Client ID environment variable cannot be empty.")
-	//}
-   //if clientSecret == "" {
-	//	t.Fatalf("Azure Client Secret environment variable cannot be empty.")
-	//}
-   //if subscriptionID == "" {
-	//	t.Fatalf("Azure Subscription environment variable cannot be empty.")
-	//}
-   //if tenantID == "" {
-	//	t.Fatalf("Azure Tenant environment variable cannot be empty.")
-	//}
-
    siteType := os.Getenv("site_type")
 
    if siteType == "" {
@@ -138,7 +120,15 @@ func TestDeployment(t *testing.T) {
 
    // Destroy the infrastructure - used during development - the teardown function will be used normally
    test_structure.RunTestStage(t, "destroy", func() {
-      terraformOptions := test_structure.LoadTerraformOptions(t, TerraformDir)
+      var targets []string
+      targets = append(targets, "azurerm_resource_group.avi")
+      terraVars := getTerraVars()
+      terraformOptions := &terraform.Options{
+         // The path to where your Terraform code is located
+         TerraformDir: TerraformDir,
+         Vars: terraVars,
+         Targets: targets,
+      }
       terraform.Destroy(t, terraformOptions)
    })
 
@@ -225,13 +215,13 @@ func testURL(t *testing.T, endpoint string, path string, expectedStatus int, exp
    tlsConfig := tls.Config{InsecureSkipVerify: true}
    url := fmt.Sprintf("%s://%s/%s", "https", endpoint, path)
    actionDescription := fmt.Sprintf("Calling %s", url)
-   output := retry.DoWithRetry(t, actionDescription, 10, 10 * time.Second, func() (string, error) {
+   output := retry.DoWithRetry(t, actionDescription, 24 , 30 * time.Second, func() (string, error) {
       statusCode, body := http_helper.HttpGet(t, url, &tlsConfig)
       if statusCode == expectedStatus {
          logger.Logf(t, "Got expected status code %d from URL %s", expectedStatus, url)
          return body, nil
       }
-      return "", fmt.Errorf("got status %d instead of the expected %d from %s", statusCode, expectedStatus, url)
+      return "", fmt.Errorf("Recieved status %d from %s. Retrying...", statusCode, url)
    })
    assert.Contains(t, output, expectedBody, "Body should contain expected text")
 }

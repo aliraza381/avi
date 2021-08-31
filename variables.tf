@@ -71,11 +71,6 @@ variable "avi_subnet" {
   type        = string
   default     = "10.255.0.0/24"
 }
-variable "cluster_ip" {
-  description = "The IP Address that will be used for the Avi Cluster address. This IP should be in the same subnet as the avi_subnet variable or the subnet specified with the custom_subnet_name"
-  type        = string
-  default     = "10.255.0.250"
-}
 variable "custom_vnet_name" {
   description = "This field can be used to specify an existing VNET for the controller and SEs. The create_networking variable must also be set to false for this network to be used."
   type        = string

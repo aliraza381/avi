@@ -21,7 +21,6 @@ module "avi_controller_azure_westus2" {
   se_ha_mode                   = "active/active"
   vnet_address_space           = "10.251.0.0/16"
   avi_subnet                   = "10.251.0.0/24"
-  cluster_ip                   = "10.251.0.250"
   configure_dns_profile        = true
   dns_service_domain           = "aviwest2.local"
   configure_dns_vs             = true
@@ -47,7 +46,6 @@ module "avi_controller_azure_eastus2" {
   se_ha_mode                      = "active/active"
   vnet_address_space              = "10.252.0.0/16"
   avi_subnet                      = "10.252.0.0/24"
-  cluster_ip                      = "10.252.0.250"
   configure_dns_profile           = true
   dns_service_domain              = "avieast2.local"
   configure_dns_vs                = true

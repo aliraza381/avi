@@ -34,6 +34,9 @@ resource "azurerm_network_interface" "avi" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = var.controller_public_address ? azurerm_public_ip.avi[count.index].id : null
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 resource "azurerm_virtual_network_peering" "avi" {
   count                     = var.create_vnet_peering ? 1 : 0
