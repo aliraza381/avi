@@ -1,5 +1,8 @@
 # AVI Controller Deployment on Azure Terraform module
 This Terraform module creates and configures an AVI (NSX Advanced Load Balancer) Controller on Azure
+[![Avi - Single Site Deployment](https://github.com/slarimore02/terraform-azurerm-avi-controller-azure/actions/workflows/single-site-test.yml/badge.svg)](https://github.com/slarimore02/terraform-azurerm-avi-controller-azure/actions/workflows/single-site-test.yml)
+[![Avi - 2 Site GSLB Deployment](https://github.com/slarimore02/terraform-azurerm-avi-controller-azure/actions/workflows/dual-site-gslb-test.yml/badge.svg)](https://github.com/slarimore02/terraform-azurerm-avi-controller-azure/actions/workflows/dual-site-gslb-test.yml)
+
 
 ## Module Functions
 The module is meant to be modular and can create all or none of the prerequisite resources needed for the AVI Azure Deployment including:
