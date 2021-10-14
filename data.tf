@@ -6,3 +6,7 @@ data "azurerm_subnet" "custom" {
   virtual_network_name = var.custom_vnet_name
   resource_group_name  = var.custom_controller_resource_group
 }
+data "azurerm_resource_group" "custom" {
+  count = var.create_resource_group == false ? 1 : 0
+  name  = var.custom_controller_resource_group
+}

@@ -48,7 +48,7 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
   count                           = var.controller_ha ? 3 : 1
   name                            = "${var.name_prefix}-avi-controller-${count.index + 1}"
   resource_group_name             = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_controller_resource_group
-  location                        = azurerm_resource_group.avi[0].location
+  location                        = var.create_resource_group ? azurerm_resource_group.avi[0].location : data.azurerm_resource_group.custom[0].location
   size                            = var.controller_vm_size
   admin_username                  = "avi-admin"
   admin_password                  = "Password123!"
