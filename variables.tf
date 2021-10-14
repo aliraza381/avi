@@ -191,7 +191,7 @@ variable "se_ha_mode" {
   }
 }
 variable "dns_servers" {
-  description = "The optional DNS servers that will be used for local DNS resolution by the controller. Example [\"8.8.4.4\", \"8.8.8.8\"]"
+  description = "The optional DNS servers that will be used for local DNS resolution by the controller. The dns_search_domain variable must also be specified if this variable is set. Example [\"8.8.4.4\", \"8.8.8.8\"]"
   type        = list(string)
   default     = null
 }
