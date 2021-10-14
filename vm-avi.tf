@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
     disk_size_gb         = var.root_disk_size
   }
   provisioner "local-exec" {
-    command = var.controller_public_address ? "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self.public_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\"" : "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self[count.index].private_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
+    command = var.controller_public_address ? "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self.public_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\"" : "bash ${path.module}/files/change-controller-password.sh --controller-address \"${self.private_ip_address}\" --current-password \"${var.controller_default_password}\" --new-password \"${var.controller_password}\""
   }
   timeouts {
     create = "20m"
