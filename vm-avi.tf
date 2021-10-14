@@ -12,7 +12,7 @@ locals {
     region                          = var.region
     se_vm_size                      = var.se_vm_size
     use_azure_dns                   = var.use_azure_dns
-    se_resource_group               = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group
+    se_resource_group               = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group != null ? var.custom_se_resource_group : var.custom_controller_resource_group
     se_name_prefix                  = var.name_prefix
     controller_ha                   = var.controller_ha
     controller_ip                   = local.controller_ip

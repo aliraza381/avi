@@ -25,7 +25,7 @@ variable "use_azure_dns" {
 variable "custom_se_resource_group" {
   description = "This field can be used to specify an existing Resource Group for Service Engines."
   type        = string
-  default     = ""
+  default     = null
 }
 variable "custom_controller_resource_group" {
   description = "This field can be used to specify an existing Resource Group for AVI Controllers. The create_resource_group variable must also be set to false for this resource group to be used."
