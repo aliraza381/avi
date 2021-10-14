@@ -63,7 +63,7 @@ resource "azurerm_role_assignment" "custom_controller" {
 }
 resource "azurerm_role_assignment" "contributor" {
   count                = var.create_iam ? 1 : 0
-  scope                = azurerm_resource_group.avi[0].id
+  scope                = var.create_resource_group ? azurerm_resource_group.avi[0].id : data.azurerm_resource_group.custom[0].id
   role_definition_name = "Contributor"
   principal_id         = azuread_service_principal.avi[0].object_id
 }
