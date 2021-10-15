@@ -2,7 +2,7 @@ locals {
   cloud_settings = {
     subscription_id                 = data.azurerm_subscription.current.subscription_id
     se_mgmt_subnet_name             = var.create_networking ? azurerm_subnet.avi[0].name : data.azurerm_subnet.custom[0].name
-    se_vnet_id_path                 = var.create_networking ? azurerm_virtual_network.avi[0].id : data.azurerm_subnet.custom[0].id
+    se_vnet_id_path                 = var.create_networking ? azurerm_virtual_network.avi[0].id : data.azurerm_virtual_network.custom[0].id
     controller_public_address       = var.controller_public_address
     avi_version                     = local.avi_version
     dns_servers                     = var.dns_servers
