@@ -39,7 +39,7 @@ resource "azurerm_network_security_group" "avi_controller_mgmt" {
   }
   security_rule {
     name                       = "avi_controller_ntp"
-    priority                   = 300
+    priority                   = 400
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Udp"
