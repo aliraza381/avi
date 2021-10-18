@@ -100,6 +100,7 @@
           application_id: "{{ azure_app_id }}"
           authentication_token: "{{ azure_auth_token }}"
           tenant_id: "{{ azure_tenant_id }}"
+%{ if configure_cloud ~}
     - name: Configure Cloud
       avi_cloud:
         avi_credentials: "{{ avi_credentials }}"
@@ -460,7 +461,7 @@
 %{ endfor ~}
                 dns_vses:
                   - dns_vs_uuid: "{{ dns_vs_verify.obj.results.0.uuid }}"
-  %{ endfor }%{ endif }
+  %{ endfor }%{ endif }%{ endif ~}
 %{ if controller_ha }
     - name: Configure Cluster Credentials
       avi_api_session:

@@ -18,6 +18,7 @@ locals {
     controller_ip                   = local.controller_ip
     controller_names                = local.controller_names
     use_standard_alb                = var.use_standard_alb
+    configure_cloud                 = var.configure_cloud
     configure_dns_profile           = var.configure_dns_profile
     dns_service_domain              = var.dns_service_domain
     configure_dns_vs                = var.configure_dns_vs

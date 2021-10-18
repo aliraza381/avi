@@ -146,6 +146,11 @@ variable "custom_tags" {
   type        = map(string)
   default     = {}
 }
+variable "configure_cloud" {
+  description = "Configure the Avi Cloud via Ansible after controller deployment. If not set to true this must be done manually with the desired config"
+  type        = bool
+  default     = "true"
+}
 variable "configure_dns_profile" {
   description = "Configure Avi DNS Profile for DNS Record Creation for Virtual Services. If set to true the dns_service_domain variable must also be set"
   type        = bool
