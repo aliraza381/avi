@@ -128,7 +128,7 @@ variable "se_vm_size" {
   default     = "Standard_F2s"
 }
 variable "controller_disk_type" {
-  description = "The Type of Storage Account which should back this the Internal OS Disk. Possible values are Standard_LRS, StandardSSD_ZRS, Premium_LRS, Premium_ZRS, StandardSSD_LRS or UltraSSD_LRS."
+  description = "The Type of Storage Account which should back this the Internal OS Disk. Possible values are Premium_LRS, Standard_LRS, StandardSSD_LRS"
   type        = string
   default     = "Premium_LRS"
 }

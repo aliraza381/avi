@@ -34,8 +34,19 @@ resource "azurerm_network_security_group" "avi_controller_mgmt" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "VirtualNetwork"
+  }
+  security_rule {
+    name                       = "avi_controller_ntp"
+    priority                   = 300
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Udp"
+    source_port_range          = "*"
+    destination_port_range     = "123"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "VirtualNetwork"
   }
 
   tags = var.custom_tags
