@@ -74,7 +74,7 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
   tags = var.custom_tags
 
   os_disk {
-    storage_account_type = "Standard_LRS"
+    storage_account_type = var.storage_account_type
     caching              = "ReadWrite"
     disk_size_gb         = var.root_disk_size
   }

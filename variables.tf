@@ -122,6 +122,11 @@ variable "se_vm_size" {
   type        = string
   default     = "Standard_F2s"
 }
+variable "storage_account_type" {
+  description = "The type of storage to use for the managed disk. Possible values are Standard_LRS, StandardSSD_ZRS, Premium_LRS, Premium_ZRS, StandardSSD_LRS or UltraSSD_LRS."
+  type        = string
+  default     = "Standard_LRS"
+}
 variable "root_disk_size" {
   description = "The root disk size for the AVI controller"
   type        = number
