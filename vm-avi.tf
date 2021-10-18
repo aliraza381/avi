@@ -89,6 +89,9 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
   lifecycle {
     create_before_destroy = true
   }
+  depends_on = [
+    azurerm_marketplace_agreement.avi,
+  ]
 }
 resource "null_resource" "ansible_provisioner" {
   # Changes to any instance of the cluster requires re-provisioning
