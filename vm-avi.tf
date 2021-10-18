@@ -9,7 +9,7 @@ locals {
     dns_search_domain               = var.dns_search_domain
     ntp_servers                     = var.ntp_servers
     email_config                    = var.email_config
-    region                          = var.region
+    region                          = local.region
     se_vm_size                      = var.se_vm_size
     use_azure_dns                   = var.use_azure_dns
     se_resource_group               = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_se_resource_group != null ? var.custom_se_resource_group : var.custom_controller_resource_group
@@ -34,7 +34,7 @@ locals {
     allocate_public_ip = var.dns_vs_allocate_public_ip
   }
   avi_version      = "20.1.4"
-  region           = replace(var.region, " ", "-")
+  region           = lower(replace(var.region, " ", ""))
   controller_ip    = azurerm_linux_virtual_machine.avi_controller[*].private_ip_address
   controller_names = azurerm_linux_virtual_machine.avi_controller[*].name
 }
