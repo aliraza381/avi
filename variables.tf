@@ -81,6 +81,11 @@ variable "custom_subnet_name" {
   type        = string
   default     = ""
 }
+variable "create_firewall_rules" {
+  description = "This variable controls the Network Security Group (NSG) rule creation for the Avi Controllers. When set to false the necessary firewall rules must be in place before the deployment"
+  type        = bool
+  default     = "true"
+}
 variable "create_iam" {
   description = "Create Azure AD Application and Service Principal, Controller Custom Role, and Application Role Binding for Avi Azure Full Access Cloud"
   type        = bool
@@ -122,17 +127,17 @@ variable "se_vm_size" {
   type        = string
   default     = "Standard_F2s"
 }
-variable "storage_account_type" {
-  description = "The type of storage to use for the managed disk. Possible values are Standard_LRS, StandardSSD_ZRS, Premium_LRS, Premium_ZRS, StandardSSD_LRS or UltraSSD_LRS."
+variable "controller_disk_type" {
+  description = "The Type of Storage Account which should back this the Internal OS Disk. Possible values are Standard_LRS, StandardSSD_ZRS, Premium_LRS, Premium_ZRS, StandardSSD_LRS or UltraSSD_LRS."
   type        = string
-  default     = "Standard_LRS"
+  default     = "Premium_LRS"
 }
-variable "root_disk_size" {
+variable "controller_disk_size" {
   description = "The root disk size for the AVI controller"
   type        = number
   default     = 128
   validation {
-    condition     = var.root_disk_size >= 128
+    condition     = var.controller_disk_size >= 128
     error_message = "The Controller root disk size should be greater than or equal to 128 GB."
   }
 }
