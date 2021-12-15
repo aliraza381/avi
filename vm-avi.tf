@@ -4,7 +4,7 @@ locals {
     se_mgmt_subnet_name             = var.create_networking ? azurerm_subnet.avi[0].name : data.azurerm_subnet.custom[0].name
     se_vnet_id_path                 = var.create_networking ? azurerm_virtual_network.avi[0].id : data.azurerm_virtual_network.custom[0].id
     controller_public_address       = var.controller_public_address
-    avi_version                     = local.avi_version
+    avi_version                     = local.avi_info[var.avi_version]["api_version"]
     dns_servers                     = var.dns_servers
     dns_search_domain               = var.dns_search_domain
     ntp_servers                     = var.ntp_servers
@@ -34,7 +34,20 @@ locals {
     subnet_name        = var.create_networking ? azurerm_subnet.avi[0].name : var.custom_subnet_name,
     allocate_public_ip = var.dns_vs_allocate_public_ip
   }
-  avi_version      = "20.1.4"
+  avi_info = {
+    "18.2" = {
+      "plan"        = "avi-vantage-adc-1802",
+      "api_version" = "18.02.12"
+    },
+    "20.1" = {
+      "plan"        = "avi-vantage-adc-2001",
+      "api_version" = "20.1.6"
+    },
+    "21.1" = {
+      "plan"        = "avi-vantage-adc-2101"
+      "api_version" = "21.1.1"
+    }
+  }
   region           = lower(replace(var.region, " ", ""))
   controller_ip    = azurerm_linux_virtual_machine.avi_controller[*].private_ip_address
   controller_names = azurerm_linux_virtual_machine.avi_controller[*].name
@@ -43,7 +56,7 @@ resource "azurerm_marketplace_agreement" "avi" {
   count     = var.create_marketplace_agreement ? 1 : 0
   publisher = "avi-networks"
   offer     = "avi-vantage-adc"
-  plan      = "avi-vantage-adc-2001"
+  plan      = local.avi_info[var.avi_version]["plan"]
 }
 resource "azurerm_linux_virtual_machine" "avi_controller" {
   count                           = var.controller_ha ? 3 : 1
@@ -64,11 +77,11 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
   source_image_reference {
     publisher = "avi-networks"
     offer     = "avi-vantage-adc"
-    sku       = "avi-vantage-adc-2001"
+    sku       = local.avi_info[var.avi_version]["plan"]
     version   = "latest"
   }
   plan {
-    name      = "avi-vantage-adc-2001"
+    name      = local.avi_info[var.avi_version]["plan"]
     publisher = "avi-networks"
     product   = "avi-vantage-adc"
   }

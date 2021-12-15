@@ -32,6 +32,15 @@ variable "custom_controller_resource_group" {
   type        = string
   default     = ""
 }
+variable "avi_version" {
+  description = "The major and minor version of the AVI Controller version that will be deployed. 18.2, 20.1, or 21.1 are valid values."
+  type        = string
+  validation {
+    condition     = var.avi_version == "18.2" || var.avi_version == "20.1" || var.avi_version == "21.1"
+    error_message = "The avi_version value must be one of 18.2, 20.1, or 21.1."
+  }
+  default = "20.1"
+}
 variable "name_prefix" {
   description = "This prefix is appended to the names of the Controller and SEs"
   type        = string
