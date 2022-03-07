@@ -35,16 +35,12 @@ locals {
     allocate_public_ip = var.dns_vs_allocate_public_ip
   }
   avi_info = {
-    "18.2" = {
-      "plan"        = "avi-vantage-adc-1802",
-      "api_version" = "18.02.12"
-    },
     "20.1" = {
-      "plan"        = "avi-vantage-adc-2001",
+      "plan"        = "nsx-alb-controller-2001",
       "api_version" = "20.1.6"
     },
     "21.1" = {
-      "plan"        = "avi-vantage-adc-2101"
+      "plan"        = "nsx-alb-controller-2101"
       "api_version" = "21.1.1"
     }
   }
