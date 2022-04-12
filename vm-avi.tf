@@ -28,6 +28,7 @@ locals {
     gslb_site_name                  = var.gslb_site_name
     gslb_domains                    = var.gslb_domains
     additional_gslb_sites           = var.additional_gslb_sites
+    create_gslb_se_group            = var.create_gslb_se_group
     se_ha_mode                      = var.se_ha_mode
   }
   dns_vs_settings = {
