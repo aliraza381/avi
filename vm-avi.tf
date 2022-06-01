@@ -45,9 +45,11 @@ locals {
       "api_version" = "21.1.1"
     }
   }
-  region           = lower(replace(var.region, " ", ""))
-  controller_ip    = azurerm_linux_virtual_machine.avi_controller[*].private_ip_address
-  controller_names = azurerm_linux_virtual_machine.avi_controller[*].name
+  region                          = lower(replace(var.region, " ", ""))
+  controller_ip                   = azurerm_linux_virtual_machine.avi_controller[*].private_ip_address
+  controller_names                = azurerm_linux_virtual_machine.avi_controller[*].name
+  regions_with_availability_zones = ["centralus", "eastus2", "eastus", "westus2", "westus3", "southcentralus", "brazilsouth", "canadacentral", "francecentral", "germanywestcentral", "northeurope", "norwayeast", "uksouth", "westeurope", "swedencentral", "switzerlandnorth", "southafricanorth", "australiaeast", "centralindia", "japaneast", "koreacentral", "Southeast Asia", "eastasia", "chinanorth3"]
+  zones                           = contains(local.regions_with_availability_zones, local.region) ? true : false
 }
 resource "azurerm_marketplace_agreement" "avi" {
   count     = var.create_marketplace_agreement ? 1 : 0
@@ -60,6 +62,7 @@ resource "azurerm_linux_virtual_machine" "avi_controller" {
   name                            = "${var.name_prefix}-avi-controller-${count.index + 1}"
   resource_group_name             = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_controller_resource_group
   location                        = var.create_resource_group ? azurerm_resource_group.avi[0].location : data.azurerm_resource_group.custom[0].location
+  zone                            = local.zones ? count.index + 1 : null
   size                            = var.controller_vm_size
   admin_username                  = "avi-admin"
   admin_password                  = "Password123!"

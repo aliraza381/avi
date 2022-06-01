@@ -1,7 +1,7 @@
 # Create VNET and Subnets for AVI Controller and SEs
 resource "azurerm_virtual_network" "avi" {
   count               = var.create_networking ? 1 : 0
-  name                = "${var.name_prefix}-avi-vnet-${var.region}"
+  name                = "${var.name_prefix}-avi-vnet-${local.region}"
   address_space       = [var.vnet_address_space]
   location            = var.region
   resource_group_name = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_controller_resource_group
@@ -21,6 +21,7 @@ resource "azurerm_public_ip" "avi" {
   resource_group_name = var.create_resource_group ? azurerm_resource_group.avi[0].name : var.custom_controller_resource_group
   location            = var.region
   allocation_method   = "Static"
+  zones               = local.zones ? [count.index + 1] : null
 }
 resource "azurerm_network_interface" "avi" {
   count               = var.controller_ha ? 3 : 1
